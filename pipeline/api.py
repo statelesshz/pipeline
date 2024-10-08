@@ -4,59 +4,20 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import Literal, Optional, Union
 
+from .utils import ModelInfo
 from .base import FrameWork, PIPELINE_WRAPPER_MAPPING, PIPELINE_MAPPING
 
 
-MODEL_TASK_MAPPING = OrderedDict(
-  [
-    ("qwen2", "chat"),
-    ("stable-diffusion", "text-to-image"),
-  ]
-)
-
-def _find_config_json(model_str):
-  p = Path(model_str)
-  if not p.is_dir():
-    print(f"The specified path is not a directory or does not exist: {model_str}")
-    return None
-  for entry in p.iterdir():
-    if entry.is_file() and entry.name == "config.json":
-      return entry
-  return None
+# # 需要维护一份model_type->task的映射表
+# MODEL_TASK_MAPPING = OrderedDict(
+#   [
+#     ("qwen2", "chat"),
+#     ("stable-diffusion", "text-to-image"),
+#   ]
+# )
 
 
-def read_config_json(model_str):
-  config_file_path = _find_config_json(model_str)
-  try:
-    with open(config_file_path, "r", encoding="utf-8") as file:
-      config = json.load(file)
-      return config
-  except Exception as e:
-    print(f"An unknown error occurred while opening the file: {e}")
-    return None
-
-
-def parse_model_metadata(model_str: str):
-  # 尽力而为的解析
-  is_local = os.path.isdir(model_str)
-
-  if is_local:
-    print("start scanning local file.")
-    # 1. 判断框架
-
-    # fetch the content in config.json
-    config = read_config_json(model_str)
-    model_type = config.get("model_type", "unknown_model_type")
-    task = MODEL_TASK_MAPPING.get(model_type, "unknown_task")
-    return task
-  else:
-    # TODO
-    print("get model metadata from hub")
-    # model_repo
-    return None
-
-
-# now, only support transformers diffusers
+# 跟transformers保持一致
 def pipeline(
   task: Optional[str] = None,
   model: Optional[str] = None,
@@ -69,7 +30,17 @@ def pipeline(
 ):
   if task is None and model is not None:
     # parse task
-    task = parse_model_metadata(model)
+    # task = parse_model_metadata(model)
+    metadata = ModelInfo(model).metadata
+    task = metadata["pipeline_tag"]
+    if task is None:
+      raise AttributeError(
+        f'Unsupported model: "{model}" (the model did not'
+        " specify a task).\nUsually, this means that the model creator did"
+        " not intend to publish the model as a pipeline, and is only using"
+        " HuggingFace Hub as a storage for the model weights and misc"
+        " files. Thus, it is not possible to run the model automatically."
+      )
   
   pipeline_wrapper = PIPELINE_WRAPPER_MAPPING[task]
   if framework is None and pipeline_wrapper.default_framework:
@@ -93,4 +64,3 @@ def pipeline(
   pipeline.init_and_load(model, config, tokenizer, feature_extractor, image_processor, **kwargs)
   pipeline_wrapper.set_pipeline(pipeline)
   return pipeline_wrapper
-

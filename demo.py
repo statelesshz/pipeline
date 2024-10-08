@@ -1,4 +1,5 @@
-from pipeline.api import parse_model_metadata
+# from pipeline.api import parse_model_metadata
+from pipeline.utils import ModelInfo
 from pipeline import pipeline
 
 
@@ -10,5 +11,7 @@ if __name__ == "__main__":
   # print(config["model_type"])
   # task = parse_model_metadata(model_str=model_str)
   # print(task)
-  pipe = pipeline(model=model_str)
+  model_info = ModelInfo(model_str)
+  model_type = model_info.model_type
+  pipe = pipeline(task="chat", model=model_str)
   breakpoint()
