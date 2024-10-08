@@ -110,20 +110,6 @@ def _can_load_by_hf_automodel(automodel_class: type, config) -> bool:
     return False
 
 
-# def get_default_automodel(config) -> Optional[type]:
-#     import modelscope.utils.hf_util as hf_util
-#     if not hasattr(config, 'auto_map'):
-#         return None
-#     auto_map = config.auto_map
-#     automodel_list = [k for k in auto_map.keys() if k.startswith('AutoModel')]
-#     if len(automodel_list) == 1:
-#         return getattr(hf_util, automodel_list[0])
-#     if len(automodel_list) > 1 and len(
-#             set([auto_map[k] for k in automodel_list])) == 1:
-#         return getattr(hf_util, automodel_list[0])
-#     return None
-
-
 def get_hf_automodel_class(model_dir: str,
                            task_name: Optional[str]) -> Optional[type]:
     from transformers import (AutoConfig,
