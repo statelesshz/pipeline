@@ -3,8 +3,9 @@ from typing import List
 from loguru import logger
 
 from ..utils import TRUST_REMOTE_CODE, Registry
-from ..base import pipeline_registry
 
+
+pipeline_registry = Registry()
 
 # TODO: 是否需要增加**kwargs
 def create_diffusion_pipeline(task, model, revision):
@@ -112,20 +113,7 @@ for task in [
     task,
     {
       "pt": {
-        "transformers": create_diffusion_pipeline,
+        "transformers": create_transformers_pipeline,
       },
     }
   )
-
-
-def hf_missing_package_error_message(
-    pipeline_name: str, missing_packages: List[str]
-) -> str:
-    return (
-        "As a best-effort attempt, here are steps you can"
-        " take to fix this issue:\n\nyou can install"
-        " the missing packages with pip as follows:\n\npip install"
-        f" {' '.join(missing_packages)}\n\n(note that some package names and pip names"
-        " may be different, and you may need to search pypi for the correct package"
-        " name)."
-    )

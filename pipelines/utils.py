@@ -13,11 +13,6 @@ TRUST_REMOTE_CODE = os.environ.get("OM_TRUST_REMOTE_CODE", "true").lower() in (
 )
 
 
-class FrameWork(enum.Enum):
-    PT = enum.auto()
-    MS = enum.auto()
-
-
 class Registry:
     """
     A utility class to register and retrieve values by keys.
