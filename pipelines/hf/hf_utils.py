@@ -1,16 +1,15 @@
-from typing import List
-
 from loguru import logger
 
 from ..utils import TRUST_REMOTE_CODE, Registry
-from ..base import pipeline_registry
 
+
+pipeline_registry = Registry()
 
 # TODO: 是否需要增加**kwargs
 def create_diffusion_pipeline(task, model, revision):
   try:
     import torch
-    from diffusers import DiffusionPipeline
+    from diffusers import AutoPipelineForText2Image
   except ImportError:
     raise RuntimeError(
       "openmind pipeline requires torch and diffusers but they are not"
@@ -23,7 +22,7 @@ def create_diffusion_pipeline(task, model, revision):
     torch_dtype = torch.bfloat16
 
   try:
-    pipeline = DiffusionPipeline.from_pretrained(
+    pipeline = AutoPipelineForText2Image.from_pretrained(
       model,
       revision=revision,
       torch_dtype=torch_dtype,
@@ -32,7 +31,7 @@ def create_diffusion_pipeline(task, model, revision):
     logger.info(
       f"Failed to create pipeline with {torch_dtype}: {e}, fallback to fp32"
     )
-    pipeline = DiffusionPipeline.from_pretrained(
+    pipeline = AutoPipelineForText2Image.from_pretrained(
       model,
       revision=revision
     )
@@ -43,14 +42,17 @@ def create_diffusion_pipeline(task, model, revision):
 
 # 不同库如transformers/diffusers都会支持相同的任务text-to-image
 # 不同框架也会支持相同的任务，pt(diffusers)、ms(mindone)
-pipeline_registry.register(
+for task in [
   "text-to-image",
-  {
-    "pt": {
-      "diffusers": create_diffusion_pipeline,
-    },
-  }
-)
+]:
+  pipeline_registry.register(
+    task,
+    {
+      "pt": {
+        "diffusers": create_diffusion_pipeline,
+      },
+    }
+  )
 
 
 # TODO: 是否需要增加**kwargs
@@ -112,20 +114,7 @@ for task in [
     task,
     {
       "pt": {
-        "transformers": create_diffusion_pipeline,
+        "transformers": create_transformers_pipeline,
       },
     }
   )
-
-
-def hf_missing_package_error_message(
-    pipeline_name: str, missing_packages: List[str]
-) -> str:
-    return (
-        "As a best-effort attempt, here are steps you can"
-        " take to fix this issue:\n\nyou can install"
-        " the missing packages with pip as follows:\n\npip install"
-        f" {' '.join(missing_packages)}\n\n(note that some package names and pip names"
-        " may be different, and you may need to search pypi for the correct package"
-        " name)."
-    )

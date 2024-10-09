@@ -1,0 +1,21 @@
+2024-10-11 04:33:18.961 | WARNING  | pipelines.utils:register:36 - Overriding previously registered "text-classification" value "{'pt': {'transformers': <class 'pipelines.hf.hf.HFTextClassificationBuilder'>}}"
+2024-10-11 04:33:18.961 | WARNING  | pipelines.utils:register:36 - Overriding previously registered "text-generation" value "{'pt': {'transformers': <class 'pipelines.hf.hf.HFTextGenerationBuilder'>}}"
+2024-10-11 04:33:18.961 | WARNING  | pipelines.utils:register:36 - Overriding previously registered "text-to-image" value "{'pt': {'diffusers': <class 'pipelines.hf.hf.HFTextToImageBuilder'>}}"
+2024-10-11 04:33:18.961 | INFO     | pipelines.hf.hf:pipeline:63 - Creating pipeline for text-classification(framework=pt, backend=transformers, model={self.model}, revision={self.revision}).
+openMind download might take a while, please be patient...
+[{'label': 'POSITIVE', 'score': 0.9998539686203003}]
+
+
+
+2024-10-11 04:33:24.456 | INFO     | pipelines.hf.hf:pipeline:63 - Creating pipeline for text-to-image(framework=pt, backend=diffusers, model={self.model}, revision={self.revision}).
+openMind download might take a while, please be patient...
+Loading pipeline components...:   0%|                                                                                                                             | 0/7 [00:00<?, ?it/s]/home/lynn/miniconda3/envs/hf/lib/python3.10/site-packages/transformers/models/clip/feature_extraction_clip.py:28: FutureWarning: The class CLIPFeatureExtractor is deprecated and will be removed in version 5 of Transformers. Please use CLIPImageProcessor instead.
+  warnings.warn(
+Loading pipeline components...: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:01<00:00,  5.96it/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 50/50 [00:05<00:00,  8.34it/s]
+
+
+
+2024-10-11 04:33:32.799 | INFO     | pipelines.hf.hf:pipeline:63 - Creating pipeline for text-generation(framework=pt, backend=transformers, model={self.model}, revision={self.revision}).
+openMind download might take a while, please be patient...
+[{'role': 'user', 'content': 'Give me a short introduction to large language model.'}, {'role': 'assistant', 'content': 'Large language models, or LLMs, are artificial intelligence systems that process and generate large amounts of human language. These models are designed to understand and replicate human language abilities in both content generation and question-answering. They have become increasingly popular due to their impressive capabilities in processing natural language and generating conversational responses. Due to their ability to process and generate large amounts of content, LLMs have become an essential tool in industries such as healthcare, marketing, and education.'}]
