@@ -1,4 +1,5 @@
 from typing import List
+
 from loguru import logger
 
 from .util import Registry, TRUST_REMOTE_CODE
@@ -7,6 +8,47 @@ from .util import Registry, TRUST_REMOTE_CODE
 hf_no_attention_mask_models = {"microsoft/phi-1", "microsoft/phi-1_5"}
 
 pipeline_registry = Registry()
+
+
+def create_diffusion_pipeline(task, model, revision):
+    try:
+        from diffusers import DiffusionPipeline
+        import torch
+    except ImportError:
+        raise RuntimeError(
+            "openmind pipeline requires torch and diffusers but they are not"
+            " installded. Please install them with: pip install diffusers"
+        )
+    
+    if torch.cuda.is_available():
+        torch_dtype = torch.float16
+    else:
+        torch_dtype = torch.bfloat16
+
+    try:
+        pipeline = DiffusionPipeline.from_pretrained(
+            model,
+            revision=revision,
+            torch_dtype=torch_dtype,
+        )
+    except Exception as e:
+        logger.info(
+            f"Failed to create pipeline with {torch_dtype}: {e}, fallback to fp32"
+        )
+        pipeline = DiffusionPipeline.from_pretrained(
+            model,
+            revision=revision
+        )
+    if torch.cuda.is_available():
+        pipeline = pipeline.to("cuda")
+    return pipeline
+
+
+# 不同库可能都会支持text-to-imgae，可以改成("task": {"backend": create_xxx_pipeline})
+pipeline_registry.register(
+    "text-to-image",
+    {"pt": create_diffusion_pipeline},
+)
 
 
 def create_transformers_pipeline(task, model, revision):
@@ -22,7 +64,7 @@ def create_transformers_pipeline(task, model, revision):
         kwargs["trust_remote_code"] = TRUST_REMOTE_CODE
 
     # TODO: check if bfloat16 is well supported
-    kwargs["torch_dtype"] = torch.flaot32
+    kwargs["torch_dtype"] = torch.float32
 
     model_kwargs = {
         "low_cpu_mem_usage": True,
@@ -31,7 +73,7 @@ def create_transformers_pipeline(task, model, revision):
     if "model" not in kwargs:
         kwargs["model_kwargs"] = model_kwargs
 
-    if torch.npu.is_available() or torch.cuda.is_available():
+    if torch.cuda.is_available():
         kwargs["device"] = 0
     kwargs.setdefault("model", model)
     try:
@@ -60,6 +102,7 @@ for task in [
         task,
         {"pt": create_transformers_pipeline},
     )
+
 
 
 def hf_missing_package_error_message(

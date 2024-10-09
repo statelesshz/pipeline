@@ -1,6 +1,6 @@
 import re
 from functools import cached_property
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from loguru import logger
 
@@ -12,6 +12,8 @@ task_cls_registry = Registry()
 
 
 HF_DEFINED_TASKS = [
+    # diffusers
+    "text-to-image",
     # transformers
     "text-classification",
     "text-generation",
@@ -20,7 +22,8 @@ HF_DEFINED_TASKS = [
 
 class HFPipelineWrapper:
     task: str = "undefined (please override this in your derived class)"
-    framework: str = "pt"
+    # framework: str = "undefined (please override this in your derived class)"
+    model_id: str = "undefined (please override this in your derived class)"
     # requirement_dependency: Optional[List[str]] = []
 
     def __init_subclass__(cls, **kwargs) -> None:
@@ -44,34 +47,27 @@ class HFPipelineWrapper:
         # model_str
         # hf:<model_name>[@<revision>]
         # hf:<task_name>:<model_name>[@<revision>]
-        task = "text-classifciation"
-        model_id = "/home/lynn/github/distilbert-base-uncsed"
+        # mock
+        # task = "text-classification"
+        task = "text-to-image"
+        model_id = model_str
         revision = None
-        framework = "pt"
+        # framework = "pt"
         return task, model_id, revision
     
-    def __init__(self, name: str, model_str: str, framework: str):
-        # if framework is not None就用这个
+    def __init__(self, model_str: str):
         task, model_id, revision = self._parse_model_str(model_str)
 
-        self.model_id = model_id
+        self.model = model_id
         self.task = task
         self.revision = revision
 
-        # 
-
-    @property
-    def metadata(self):
-        res = super().metadata
-        res.update({
-            "task": self.task
-        })
-        return res
+        self.pipeline
     
     @cached_property
     def pipeline(self):
         # TODO(lynn): checkme - get pipeline creator
-        pipeline_creator = pipeline_registry.get("pt").get(self.task)
+        pipeline_creator = pipeline_registry.get(self.task).get("pt") # 可能会报错 None.get(self.task) -> NoneType object has no attribute get
         if pipeline_creator is None:
             raise ValueError(f"Could not find pipeline creator for {self.task}")
         
@@ -79,12 +75,6 @@ class HFPipelineWrapper:
             f"Creating pipeline for {self.task}(model={self.model},"
             f" revision={self.revision}).\n"
             "HuggingFace download might take a while, please be patient..."
-        )
-
-        logger.info(
-            "Note: HuggingFace caches the downloaded models in ~/.cache/huggingface/."
-            " If you have already downloaded the model before, the download should be much"
-            " faster. If you run out of disk space, you can delete the cache folder."
         )
         try:
             pipeline = pipeline_creator(
@@ -111,11 +101,6 @@ class HFPipelineWrapper:
             else:
                 raise e
         return pipeline
-    
-    # def init(self):
-    #     super().init()
-    #     # access pipeline here to trigger download and load
-    #     self.pipeline
 
     def _run_pipeline(self, *args, **kwargs):
         import torch
@@ -126,17 +111,21 @@ class HFPipelineWrapper:
         
         # autocast causes invalid value (and generates black images) for text-to-image and image-to-image
         no_auto_cast_set = ("text-to-image", "image-to-image")
-        if torch.npu.is_available() and self.task not in no_auto_cast_set:
-            with torch.autocast(device_type="npu"):
-                return self.pipeline(*args, **kwargs)
-        elif torch.cuda.is_available() and self.task not in no_auto_cast_set:
+        # if torch.npu.is_available() and self.task not in no_auto_cast_set:
+        #     with torch.autocast(device_type="npu"):
+        #         return self.pipeline(*args, **kwargs)
+        if torch.cuda.is_available() and self.task not in no_auto_cast_set:
             with torch.autocast(device_type="cuda"):
                 return self.pipeline(*args, **kwargs)
         else:
             return self.pipeline(*args, **kwargs)
 
+    def __call__(self, *args, **kwargs):
+        return self.pipeline(*args, **kwargs)
+
+    # 入口
     @classmethod
-    def create_from_model_str(cls, name, model_str):
+    def create_from_model_str(cls, model_str):
         task, _, _ = cls._parse_model_str(model_str)
         task_cls = task_cls_registry.get(task)
         if task_cls is None:
@@ -151,7 +140,7 @@ class HFPipelineWrapper:
         # model_str
         # hf:<model_name>[@<revision>]
         # hf:<task_name>:<model_name>[@<revision>]
-        return task_cls(name, model_str)  # HFPipelieWrapper()
+        return task_cls(model_str)  # HFPipelieWrapper()
 
 
 class HFTextClassificationWrapper(HFPipelineWrapper):
@@ -168,8 +157,43 @@ class HFTextClassificationWrapper(HFPipelineWrapper):
         )
         return res
 
-# HUGGING_FACE_SCHEMAS=["hf", "huggingface"]
-# wrapper_registry = Registry()
-# wrapper_registry.register(
-#     HUGGING_FACE_SCHEMAS, HFPipelineWrapper.create_from_model_str
-# )
+
+class HFTextToImageWrapper(HFPipelineWrapper):
+    task = "text-to-image"
+
+    def __call__(
+        self,
+        prompt: Union[str, List[str]],
+        height: Optional[int] = None,
+        width: Optional[int] = None,
+        num_inference_steps: int = 50,
+        guidance_scale: float = 7.5,
+        negative_prompt: Optional[Union[str, List[str]]] = None,
+        seed: Optional[Union[int, List[int]]] = None,
+        **kwargs,
+    ):
+        import torch
+        if torch.cuda.is_available():
+            self._device = "cuda"
+        else:
+            self._device = "cpu"
+        
+        if seed is not None:
+            if not isinstance(seed, list):
+                seed = [seed]
+            generator = [
+                torch.Generator(device=self._device).manual_seed(s) for s in seed
+            ]
+        else:
+            generator = None
+
+        return self._run_pipeline(
+            prompt,
+            height=height,
+            width=width,
+            num_inference_steps=num_inference_steps,
+            guidance_scale=guidance_scale,
+            negative_prompt=negative_prompt,
+            generator=generator,
+            **kwargs,
+        ).images[0]
