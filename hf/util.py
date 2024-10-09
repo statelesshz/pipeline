@@ -1,6 +1,15 @@
+import os
 from typing import Any
 
 from loguru import logger
+
+
+TRUST_REMOTE_CODE = os.environ.get("TRUST_REMOTE_CODE", "true").lower() in (
+    "true",
+    "1",
+    "t",
+    "on",
+)
 
 
 class Registry:

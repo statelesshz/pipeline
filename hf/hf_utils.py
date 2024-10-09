@@ -1,8 +1,7 @@
 from typing import List
 from loguru import logger
 
-from .util import Registry
-from .config import TRUST_REMOTE_CODE
+from .util import Registry, TRUST_REMOTE_CODE
 
 
 hf_no_attention_mask_models = {"microsoft/phi-1", "microsoft/phi-1_5"}
@@ -61,8 +60,6 @@ for task in [
         task,
         {"pt": create_transformers_pipeline},
     )
-
-breakpoint()
 
 
 def hf_missing_package_error_message(

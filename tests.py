@@ -1,3 +1,4 @@
-from pipeline.hf.hf_utils import pipeline_registry
+from transformers import pipeline
 
-breakpoint()
+pipe = pipeline(task="text-classification", model="/home/lynn/github/distilbert-base-uncsed")
+print(pipe("This movie is disgustingly good!"))

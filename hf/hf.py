@@ -1,6 +1,6 @@
 import re
 from functools import cached_property
-from typing import List, Union, Dict
+from typing import Any, Dict, List, Union
 
 from loguru import logger
 
@@ -20,6 +20,7 @@ HF_DEFINED_TASKS = [
 
 class HFPipelineWrapper:
     task: str = "undefined (please override this in your derived class)"
+    framework: str = "pt"
     # requirement_dependency: Optional[List[str]] = []
 
     def __init_subclass__(cls, **kwargs) -> None:
@@ -43,18 +44,21 @@ class HFPipelineWrapper:
         # model_str
         # hf:<model_name>[@<revision>]
         # hf:<task_name>:<model_name>[@<revision>]
-        task = "task-classifciation"
-        model_id = "albert/albert-base-v2"
+        task = "text-classifciation"
+        model_id = "/home/lynn/github/distilbert-base-uncsed"
         revision = None
+        framework = "pt"
         return task, model_id, revision
     
-    # TODO: 在哪里初始化？使用方式
-    def __init__(self, name: str, model_str: str):
+    def __init__(self, name: str, model_str: str, framework: str):
+        # if framework is not None就用这个
         task, model_id, revision = self._parse_model_str(model_str)
 
         self.model_id = model_id
         self.task = task
         self.revision = revision
+
+        # 
 
     @property
     def metadata(self):
@@ -117,7 +121,7 @@ class HFPipelineWrapper:
         import torch
         try:
             import torch_npu
-        except Exception as e:
+        except Exception:
             ...
         
         # autocast causes invalid value (and generates black images) for text-to-image and image-to-image
@@ -125,11 +129,14 @@ class HFPipelineWrapper:
         if torch.npu.is_available() and self.task not in no_auto_cast_set:
             with torch.autocast(device_type="npu"):
                 return self.pipeline(*args, **kwargs)
+        elif torch.cuda.is_available() and self.task not in no_auto_cast_set:
+            with torch.autocast(device_type="cuda"):
+                return self.pipeline(*args, **kwargs)
         else:
             return self.pipeline(*args, **kwargs)
 
     @classmethod
-    def create_from_model_Str(cls, name, model_str):
+    def create_from_model_str(cls, name, model_str):
         task, _, _ = cls._parse_model_str(model_str)
         task_cls = task_cls_registry.get(task)
         if task_cls is None:
@@ -141,13 +148,16 @@ class HFPipelineWrapper:
                 " kindly include the specific model that you are trying to run for"
                 " debugging purposes: {model_str}"
             )
-        return task_cls(name, model_str)
+        # model_str
+        # hf:<model_name>[@<revision>]
+        # hf:<task_name>:<model_name>[@<revision>]
+        return task_cls(name, model_str)  # HFPipelieWrapper()
 
 
 class HFTextClassificationWrapper(HFPipelineWrapper):
     task = "text-classification"
 
-    def run(
+    def __call__(
         self,
         inputs: Union[str, List[str]],
         **kwargs,
@@ -158,8 +168,8 @@ class HFTextClassificationWrapper(HFPipelineWrapper):
         )
         return res
 
-HUGGING_FACE_SCHEMAS=["hf", "huggingface"]
-wrapper_registry = Registry()
-wrapper_registry.register(
-    HUGGING_FACE_SCHEMAS, HFPipelineWrapper.create_from_model_str
-)
+# HUGGING_FACE_SCHEMAS=["hf", "huggingface"]
+# wrapper_registry = Registry()
+# wrapper_registry.register(
+#     HUGGING_FACE_SCHEMAS, HFPipelineWrapper.create_from_model_str
+# )
