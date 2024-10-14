@@ -1,5 +1,6 @@
 import copy
-from typing import Optional, List, Union
+from functools import cached_property
+from typing import Callable, Optional, List, Union
 
 from loguru import logger
 
@@ -17,37 +18,34 @@ class PipelineWrapper(BasePipelineWrapper):
     super().__init__(task, default_framework, default_model, default_backend, **kwargs)
 
 
-def _get_generated_text(res):
-    if isinstance(res, str):
-        return res
-    elif isinstance(res, dict):
-        return res["generated_text"]
-    elif isinstance(res, list):
-        if len(res) == 1:
-            return _get_generated_text(res[0])
-        else:
-            return [_get_generated_text(r) for r in res]
-    else:
-        raise ValueError(f"Unsupported result type in _get_generated_text: {type(res)}")
-
-
-class TextGenerationPipeline(PTBasePipeline):
+class HFPipeline(PTBasePipeline):
   def __init__(self,
-               task: str,
-               model: str,
-               revision: str,
-               framework: str,
-               backend: str,
+               task: str = None, 
+               model: str = None,
+               config: str = None, 
+               tokenizer: str = None, 
+               feature_extractor: str = None, 
+               image_processor: str = None,
+               revision: str = None,
+               framework: str = None, 
+               backend: str = None, 
                **kwargs):
-    self.task = "text-generation"
+    self.task = task
     self.model = model
+    self.config = config
+    self.tokenizer =tokenizer
+    self.feature_extractor = feature_extractor
+    self.image_processor = image_processor
     self.revision = revision
     self.framework = "pt"
-    self.backend = "transformers"
+    self.backend = backend
     self.kwargs = copy.deepcopy(kwargs)
-    # self.pipeline = None
-  
-  def init(self):
+
+    # access pipeline here to trigger download and load
+    self.pipeline
+
+  @cached_property
+  def pipeline(self) -> Callable:
     try:
       pipeline_creator = pipeline_registry.get(self.task).get(self.framework).get(self.backend)
     except Exception as e:
@@ -62,11 +60,12 @@ class TextGenerationPipeline(PTBasePipeline):
     
     logger.info(
       f"Creating pipeline for {self.task}(framework={self.framework}, backend={self.backend},"
-      " model={self.model}, revision={self.revision}).\n"
+      f" model={self.model}, revision={self.revision}).\n"
       "openMind download might take a while, please be patient..."
     )
 
     try:
+      # TODO: 确认这里要传入什么参数
       pipeline = pipeline_creator(
         task=self.task,
         model=self.model,
@@ -75,14 +74,16 @@ class TextGenerationPipeline(PTBasePipeline):
     except ImportError as e:
       # TODO: add more user-friendly error messages
       raise e
-    
-    self.pipeline = pipeline
+    return pipeline
 
   def _run_pipeline(self, *args, **kwargs):
     # TODO: do we need this?
     try:
       import torch
-      # import torch_npu
+      # from accelerate import
+      from accelerate.utils import is_npu_available
+      if is_npu_available():
+        import torch_npu
     except ImportError as e:
       # TODO: add more user-friendly error messages
       raise e
@@ -96,6 +97,47 @@ class TextGenerationPipeline(PTBasePipeline):
     else:
       return self.pipeline(*args, **kwargs)
     return self.pipeline(*args, **kwargs)
+
+
+def _get_generated_text(res):
+    if isinstance(res, str):
+        return res
+    elif isinstance(res, dict):
+        return res["generated_text"]
+    elif isinstance(res, list):
+        if len(res) == 1:
+            return _get_generated_text(res[0])
+        else:
+            return [_get_generated_text(r) for r in res]
+    else:
+        raise ValueError(f"Unsupported result type in _get_generated_text: {type(res)}")
+
+
+class TextGenerationPipeline(HFPipeline):
+  def __init__(self,
+               task: str = None, 
+               model: str = None,
+               config: str = None, 
+               tokenizer: str = None, 
+               feature_extractor: str = None, 
+               image_processor: str = None,
+               revision: str = None,
+               framework: str = None, 
+               backend: str = None, 
+               **kwargs):
+    self.task = task
+    self.model = model
+    self.config = config
+    self.tokenizer =tokenizer
+    self.feature_extractor = feature_extractor
+    self.image_processor = image_processor
+    self.revision = revision
+    self.framework = "pt"
+    self.backend = "transformers"
+    self.kwargs = copy.deepcopy(kwargs)
+
+    # access pipeline here to trigger download and load
+    self.pipeline
   
   def __call__(
     self,

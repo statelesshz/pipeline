@@ -1,5 +1,7 @@
 from typing import Optional, Literal, Type
 
+from loguru import logger
+
 from .base import BasePipelineWrapper
 from .hf import PipelineWrapper, TextGenerationPipeline
 
@@ -25,7 +27,8 @@ def register_pipeline(task: str, framework: str, backend: str, pipeline: Type, *
 register_pipeline_wrapper(
   "text-generation",
   PipelineWrapper(
-    default_model="/home/lynn/github/qwen2.5-0.5b-instruct",
+    # <model_name>[@<revision>] or <model_name>
+    default_model="Baichuan/Baichuan2_7b_chat_pt@ca161b7",
     default_framework="pt",
     default_backend="transformers",
   )
@@ -59,14 +62,19 @@ def get_pipeline_wrapper(
     framework = pipeline_wrapper.default_framework
     if framework is None:
       raise ValueError(f"no default framework for {task}")
+    logger.info(f"framwork is not passed in, use default framework {framework} for task {task}")
 
   if model is None:
     model = pipeline_wrapper.default_model
     if model is None:
       raise ValueError(f"no default model for {task}")
+    if "@" in model:
+      model, revision = model.split("@")
+    logger.info(f"model is not passed in, use default model {model}")
   
   if backend is None:
-    backend = pipeline_wrapper.backend
+    backend = pipeline_wrapper.default_backend
+    logger.info(f"backend is not passed in, use default backend {backend}")
 
   if framework not in PIPELINE_MAPPING[task]:
     raise ValueError(f"{framework} dost not support for {task}")
@@ -77,12 +85,14 @@ def get_pipeline_wrapper(
   pipeline_class = PIPELINE_MAPPING[task][framework][backend]
   pipeline = pipeline_class(task=task,
                             model=model,
+                            config=config,
+                            tokenizer=tokenizer,
+                            feature_extractor=feature_extractor,
+                            image_processor=image_processor,
                             revision=revision,
                             framework=framework,
                             backend=backend,
                             **kwargs)
-  
-  pipeline.init()
   pipeline_wrapper.set_pipeline(pipeline)
   
   return pipeline_wrapper

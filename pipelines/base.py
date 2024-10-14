@@ -1,6 +1,5 @@
 
 from abc import ABC
-from typing import List, Optional, Sequence
 
 
 class BasePipelineWrapper(ABC):
@@ -29,19 +28,10 @@ class BasePipeline(ABC):
                 **kwargs):
       self.task = task
 
-      self.framework = None
-      self.model = None
-      self.revision = None
-      self.framework = None
-      self.backend = None
-
-   def init(self, model_str, *args, **kwargs):
-      raise NotImplementedError
-   
-
 class PTBasePipeline(BasePipeline):
    def __init__(self,
                 task: str,
+                framework: str = None,
                 **kwargs):
       super().__init__(task, **kwargs)
       self.framework = "pt"
