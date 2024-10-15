@@ -6,7 +6,13 @@ from ..utils import TRUST_REMOTE_CODE, Registry
 pipeline_registry = Registry()
 
 
-def create_transformers_pipeline(task, model, revision, **kwargs):
+def create_transformers_pipeline(task: str=None,
+                                 model: str=None,
+                                 config: str=None,
+                                 tokenizer: str=None,
+                                 feature_extractor: str=None,
+                                 image_processor: str=None,
+                                 **kwargs):
   from transformers import pipeline, is_torch_npu_available
   import torch
   try:
@@ -37,7 +43,7 @@ def create_transformers_pipeline(task, model, revision, **kwargs):
   kwargs.update(_kwargs)
   
   try:
-    pipe = pipeline(task=task, revision=revision, **kwargs)
+    pipe = pipeline(task=task, **kwargs)
   except Exception as e:
     logger.info(
       f"Failed to create pipeline with {torch_dtype}: {e}, fallback to fp32"
@@ -52,7 +58,7 @@ def create_transformers_pipeline(task, model, revision, **kwargs):
             kwargs.pop("model_kwargs")
     # fallback to fp32
     kwargs.pop("torch_dtype")
-    pipe = pipeline(task=task, revision=revision, **kwargs)
+    pipe = pipeline(task=task, **kwargs)
   return pipe
 
 for task in [

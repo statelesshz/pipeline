@@ -10,7 +10,6 @@ def pipeline(
   tokenizer: Optional[str] = None,
   feature_extractor: Optional[str] = None,
   image_processor: Optional[str] = None,
-  revision: Optional[str] = None,
   framework: Optional[Literal["pt", "ms"]] = None,
   backend: Optional[str] = None,
   **kwargs,
@@ -21,7 +20,6 @@ def pipeline(
                               tokenizer, 
                               feature_extractor, 
                               image_processor,
-                              revision,
                               framework, 
                               backend, 
                               **kwargs)

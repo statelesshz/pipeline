@@ -48,32 +48,63 @@ def get_pipeline_wrapper(
   tokenizer: Optional[str] = None,
   feature_extractor: Optional[str] = None,
   image_processor: Optional[str] = None,
-  revision: Optional[str] = None,
   framework: Optional[Literal["pt", "ms"]] = None,
   backend: Optional[str] = None,
   **kwargs,
 ):
-  if task is None and model is not None:
-    raise ValueError("openmind currently does not support creating a pipeline object by only passing in the model")
+  if task is None and model is None:
+    raise RuntimeError(
+      "Impossible to instantiate a pipeline without either a task or a model being specified. "
+      "Please provide a task class or a model"
+      )
   
-  pipeline_wrapper = PIPELINE_WRAPPER_MAPPPING.get(task)
-
+  if model is None and tokenizer is not None:
+    raise RuntimeError(
+      "Impossible to instantiate a pipeline with tokenizer specified but not the model as the provided tokenizer"
+      " may not be compatible with the default model. Please provide a PreTrainedModel class or a"
+      " path/identifier to a pretrained model when providing tokenizer."
+    )
+  
+  if model is None and feature_extractor  is not None:
+    raise RuntimeError(
+      "Impossible to instantiate a pipeline with feature_extractor specified but not the model as the provided"
+      " feature_extractor may not be compatible with the default model. Please provide a PreTrainedModel class"
+      " or a path/identifier to a pretrained model when providing feature_extractor."
+    )
+  
+  if model is None and image_processor is not None:
+    raise RuntimeError(
+      "Impossible to instantiate a pipeline with image_processor specified but not the model as the provided"
+      " feature_extractor may not be compatible with the default model. Please provide a PreTrainedModel class"
+      " or a path/identifier to a pretrained model when providing image_processor."
+    )
+  
+  if task is None and model is not None:
+    # TODO: support instantiate a pipeline with model specified only
+    raise RuntimeError(
+      "Impossible to instantiate a pipelie with model specidifed but not the task."
+    )
+  
+  pipe_wrapper = PIPELINE_WRAPPER_MAPPPING.get(task)
   if framework is None:
-    framework = pipeline_wrapper.default_framework
+    framework = pipe_wrapper.default_framework
     if framework is None:
-      raise ValueError(f"no default framework for {task}")
-    logger.info(f"framwork is not passed in, use default framework {framework} for task {task}")
+      raise RuntimeError(
+        "Framework is not specified and the pipeline wrapper for {task} does not specify a default framework"
+      )
+    logger.info(f"Framework is not specified, use default framework {framework} for task {task}")
 
   if model is None:
-    model = pipeline_wrapper.default_model
+    model = pipe_wrapper.default_model
     if model is None:
       raise ValueError(f"no default model for {task}")
     if "@" in model:
       model, revision = model.split("@")
-    logger.info(f"model is not passed in, use default model {model}")
+      kwargs["revision"] = revision
+    logger.info(f"Model is not specified, use default model {model}")
   
   if backend is None:
-    backend = pipeline_wrapper.default_backend
+    backend = pipe_wrapper.default_backend
     logger.info(f"backend is not passed in, use default backend {backend}")
 
   if framework not in PIPELINE_MAPPING[task]:
@@ -89,11 +120,10 @@ def get_pipeline_wrapper(
                             tokenizer=tokenizer,
                             feature_extractor=feature_extractor,
                             image_processor=image_processor,
-                            revision=revision,
                             framework=framework,
                             backend=backend,
                             **kwargs)
-  pipeline_wrapper.set_pipeline(pipeline)
+  pipe_wrapper.set_pipeline(pipeline)
   
-  return pipeline_wrapper
+  return pipe_wrapper
   

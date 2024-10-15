@@ -26,7 +26,6 @@ class HFPipeline(PTBasePipeline):
                tokenizer: str = None, 
                feature_extractor: str = None, 
                image_processor: str = None,
-               revision: str = None,
                framework: str = None, 
                backend: str = None, 
                **kwargs):
@@ -36,7 +35,6 @@ class HFPipeline(PTBasePipeline):
     self.tokenizer =tokenizer
     self.feature_extractor = feature_extractor
     self.image_processor = image_processor
-    self.revision = revision
     self.framework = "pt"
     self.backend = backend
     self.kwargs = copy.deepcopy(kwargs)
@@ -69,7 +67,11 @@ class HFPipeline(PTBasePipeline):
       pipeline = pipeline_creator(
         task=self.task,
         model=self.model,
-        revision=self.revision,
+        config=self.config,
+        tokenizer=self.tokenizer,
+        feature_extractor=self.feature_extractor,
+        image_processor=self.image_processor,
+        **self.kwargs,
       )
     except ImportError as e:
       # TODO: add more user-friendly error messages
