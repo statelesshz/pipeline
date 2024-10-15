@@ -1,6 +1,6 @@
-from loguru import logger
-
-from ..utils import TRUST_REMOTE_CODE, Registry
+from typing import Dict
+from openmind import AutoTokenizer
+from ..utils import Registry, download_from_repo, get_task_from_readme
 
 
 pipeline_registry = Registry()
@@ -12,53 +12,86 @@ def create_transformers_pipeline(task: str=None,
                                  tokenizer: str=None,
                                  feature_extractor: str=None,
                                  image_processor: str=None,
+                                 model_kwargs: Dict=None,
                                  **kwargs):
-  from transformers import pipeline, is_torch_npu_available
-  import torch
-  try:
-    import torch_npu
-  except Exception:
-    ...
-  
-  _kwargs = {}
-  if TRUST_REMOTE_CODE:
-    _kwargs["trust_remote_code"] = TRUST_REMOTE_CODE
+  from transformers import pipeline
 
-  if torch.cuda.is_available() or is_torch_npu_available():
-    torch_dtype = torch.float16
-  else:
-    torch_dtype = torch.float32
-  _kwargs["torch_dtype"] = torch_dtype
+  revision = kwargs.pop("revision", None)
+  cache_dir = kwargs.pop("cache_dir", None)
+  force_download = kwargs.pop("force_download", False)
+  use_fast = kwargs.pop("use_fast", False)
+  device = kwargs.pop("device", None)
+  device_map = kwargs.pop("device_map", None)
+  torch_dtype = kwargs.pop("torch_dtype", None)
+  use_auth_token = kwargs.pop("use_auth_token", None)
+  trust_remote_code = kwargs.pop("trust_remote_code", None)
+  _commit_hash = kwargs.get("_commit_hash", None)
 
-  model_kwargs = {
-    "low_cpu_mem_usage": True,
-  }
-
-  if "model" not in _kwargs:
-    _kwargs["model_kwargs"] = model_kwargs
-
-  if torch.cuda.is_available() or is_torch_npu_available:
-    _kwargs["device"] = 0
-  _kwargs.setdefault("model", model)
-  kwargs.update(_kwargs)
-  
-  try:
-    pipe = pipeline(task=task, **kwargs)
-  except Exception as e:
-    logger.info(
-      f"Failed to create pipeline with {torch_dtype}: {e}, fallback to fp32"
+  if isinstance(model, str):
+    model_name_or_path = download_from_repo(
+      model, revision=revision, cache_dir=cache_dir, force_download=force_download
     )
-    if "low_cpu_mem_usage" in str(e).lower():
-        logger.info(
-            "error seems to be caused by low_cpu_mem_usage, retry without"
-            " low_cpu_mem_usage"
-        )
-        kwargs.get("model_kwargs", {}).pop("low_cpu_mem_usage")
-        if not kwargs.get("model_kwargs"):
-            kwargs.pop("model_kwargs")
-    # fallback to fp32
-    kwargs.pop("torch_dtype")
-    pipe = pipeline(task=task, **kwargs)
+    if task is None:
+      task = get_task_from_readme(model_name_or_path)
+  else:
+    model_name_or_path = model
+
+  if tokenizer is not None:
+    if isinstance(tokenizer, str):
+      tokenizer_name_or_path = download_from_repo(
+        tokenizer, revision=revision, cache_dir=cache_dir, force_download=force_download
+      )
+    else:
+      tokenizer_name_or_path = tokenizer
+  else:
+    if (task == "text-generation" or task == "text_generation") and isinstance(model, str):
+      tokenizer_kwargs = {
+        "revision": revision,
+        "token": use_auth_token,
+        "trust_remote_code": trust_remote_code,
+        "_commit_hash": _commit_hash,
+        "torch_dtype": torch_dtype,
+      }
+      tokenizer_name_or_path = AutoTokenizer.from_pretrained(model, **tokenizer_kwargs)
+    else:
+      tokenizer_name_or_path = tokenizer
+
+  if isinstance(config, str):
+    config_name_or_path = download_from_repo(
+      config, revision=revision, cache_dir=cache_dir, force_download=force_download
+    )
+  else:
+    config_name_or_path = config
+
+  if isinstance(feature_extractor, str):
+    feature_extractor_name_or_path = download_from_repo(
+      feature_extractor, revision=revision, cache_dir=cache_dir, force_download=force_download
+    )
+  else:
+    feature_extractor_name_or_path = feature_extractor
+
+  if isinstance(image_processor, str):
+    image_processor_name_or_path = download_from_repo(
+      image_processor, revision=revision, cache_dir=cache_dir, force_download=force_download
+    )
+  else:
+    image_processor_name_or_path = image_processor
+
+    pipe = pipeline(task=task,
+                    model=model_name_or_path,
+                    tokenizer = tokenizer_name_or_path,
+                    config = config_name_or_path,
+                    feature_extractor = feature_extractor_name_or_path,
+                    image_processor = image_processor_name_or_path,
+                    revision = revision,
+                    use_fast=use_fast,
+                    device = device,
+                    device_map = device_map,
+                    torch_dtype=torch_dtype,
+                    trust_remote_code=trust_remote_code,
+                    model_kwargs= model_kwargs,
+                    **kwargs)
+
   return pipe
 
 for task in [

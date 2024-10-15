@@ -1,6 +1,6 @@
 import copy
 from functools import cached_property
-from typing import Callable, Optional, List, Union
+from typing import Callable, Optional, List, Union, Dict
 
 from loguru import logger
 
@@ -27,7 +27,8 @@ class HFPipeline(PTBasePipeline):
                feature_extractor: str = None, 
                image_processor: str = None,
                framework: str = None, 
-               backend: str = None, 
+               backend: str = None,
+               model_kwargs: Dict = None,
                **kwargs):
     self.task = task
     self.model = model
@@ -37,6 +38,7 @@ class HFPipeline(PTBasePipeline):
     self.image_processor = image_processor
     self.framework = "pt"
     self.backend = backend
+    self.model_kwargs = copy.deepcopy(model_kwargs)
     self.kwargs = copy.deepcopy(kwargs)
 
     # access pipeline here to trigger download and load
@@ -71,6 +73,7 @@ class HFPipeline(PTBasePipeline):
         tokenizer=self.tokenizer,
         feature_extractor=self.feature_extractor,
         image_processor=self.image_processor,
+        model_kwargs=self.model_kwargs,
         **self.kwargs,
       )
     except ImportError as e:
@@ -125,7 +128,8 @@ class TextGenerationPipeline(HFPipeline):
                image_processor: str = None,
                revision: str = None,
                framework: str = None, 
-               backend: str = None, 
+               backend: str = None,
+               model_kwargs: Dict = None,
                **kwargs):
     self.task = task
     self.model = model
@@ -136,6 +140,7 @@ class TextGenerationPipeline(HFPipeline):
     self.revision = revision
     self.framework = "pt"
     self.backend = "transformers"
+    self.model_kwargs = copy.deepcopy(model_kwargs)
     self.kwargs = copy.deepcopy(kwargs)
 
     # access pipeline here to trigger download and load

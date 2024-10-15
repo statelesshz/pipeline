@@ -1,4 +1,4 @@
-from typing import Optional, Literal
+from typing import Optional, Literal, Dict, Any
 
 from .builder import get_pipeline_wrapper
 
@@ -12,6 +12,7 @@ def pipeline(
   image_processor: Optional[str] = None,
   framework: Optional[Literal["pt", "ms"]] = None,
   backend: Optional[str] = None,
+  model_kwargs: Optional[Dict[str, Any]] = None,
   **kwargs,
 ):
   return get_pipeline_wrapper(task, 
@@ -21,5 +22,6 @@ def pipeline(
                               feature_extractor, 
                               image_processor,
                               framework, 
-                              backend, 
+                              backend,
+                              model_kwargs,
                               **kwargs)
