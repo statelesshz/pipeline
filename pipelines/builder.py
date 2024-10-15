@@ -1,4 +1,4 @@
-from typing import Optional, Literal, Type
+from typing import Optional, Literal, Type, Dict, Any
 
 from loguru import logger
 
@@ -50,6 +50,7 @@ def get_pipeline_wrapper(
   image_processor: Optional[str] = None,
   framework: Optional[Literal["pt", "ms"]] = None,
   backend: Optional[str] = None,
+  model_kwargs: Dict[str, Any] = None,
   **kwargs,
 ):
   if task is None and model is None:
@@ -122,6 +123,7 @@ def get_pipeline_wrapper(
                             image_processor=image_processor,
                             framework=framework,
                             backend=backend,
+                            model_kwargs=model_kwargs,
                             **kwargs)
   pipe_wrapper.set_pipeline(pipeline)
   

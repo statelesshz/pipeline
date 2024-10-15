@@ -1,7 +1,9 @@
 import os
-from typing import Any
+import re
+from typing import Any, Optional
 
 from loguru import logger
+from openmind.utils.hub import OpenMindHub
 
 
 TRUST_REMOTE_CODE = os.environ.get("OM_TRUST_REMOTE_CODE", "true").lower() in (
@@ -44,3 +46,34 @@ class Registry:
 
     def keys(self):
         return self._map.keys()
+
+
+def download_from_repo(repo_id, revision=None, cache_dir=None, force_download=False):
+    if not os.path.exists(repo_id):
+        local_path = OpenMindHub.snapshot_download(
+            repo_id=repo_id,
+            revision=revision,
+            cache_dir=cache_dir,
+            force_download=force_download,
+        )
+    else:
+        local_path = repo_id
+    return local_path
+
+
+def get_task_from_readme(model_name) -> Optional[str]:
+    """
+    Get the task of the model by reading the README.md file.
+    """
+    readme_file = os.path.join(model_name, "README.md")
+    if os.path.exists(readme_file):
+        with open(readme_file, "r") as file:
+            content = file.read()
+            pipeline_tag = re.search(r"pipeline_tag:\s?(([a-z]*-)*[a-z]*)", content)
+            if pipeline_tag:
+                task = pipeline_tag.group(1)
+            else:
+                logger.warning("Cannot infer the task from the provided model, please provide the task explicitly.")
+    else:
+        logger.warning("README.md not found in the model path, please provide the task explicitly.")
+    return task
