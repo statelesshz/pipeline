@@ -65,15 +65,18 @@ def get_task_from_readme(model_name) -> Optional[str]:
     """
     Get the task of the model by reading the README.md file.
     """
-    readme_file = os.path.join(model_name, "README.md")
-    if os.path.exists(readme_file):
-        with open(readme_file, "r") as file:
-            content = file.read()
-            pipeline_tag = re.search(r"pipeline_tag:\s?(([a-z]*-)*[a-z]*)", content)
-            if pipeline_tag:
-                task = pipeline_tag.group(1)
-            else:
-                logger.warning("Cannot infer the task from the provided model, please provide the task explicitly.")
+    task = None
+    if not os.path.exists(model_name):
+        task = OpenMindHub.get_task_from_repo(model_name)
     else:
-        logger.warning("README.md not found in the model path, please provide the task explicitly.")
+        readme_file = os.path.join(model_name, "README.md")
+        if os.path.exists(readme_file):
+            with open(readme_file, "r") as file:
+                content = file.read()
+                pipeline_tag = re.search(r"pipeline_tag:\s?(([a-z]*-)*[a-z]*)", content)
+                if pipeline_tag:
+                    task = pipeline_tag.group(1)
+    if task is None:
+        logger.warning("Cannot infer the task from the provided model, please provide the task explicitly.")
+
     return task

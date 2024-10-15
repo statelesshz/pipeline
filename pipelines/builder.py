@@ -1,9 +1,13 @@
+import os.path
 from typing import Optional, Literal, Type, Dict, Any
 
 from loguru import logger
 
+from openmind.utils.hub import OpenMindHub
+
 from .base import BasePipelineWrapper
 from .hf import PipelineWrapper, TextGenerationPipeline
+from .utils import get_task_from_readme
 
 
 # task, BasePipelineWrapper
@@ -81,10 +85,12 @@ def get_pipeline_wrapper(
     )
   
   if task is None and model is not None:
-    # TODO: support instantiate a pipeline with model specified only
-    raise RuntimeError(
-      "Impossible to instantiate a pipelie with model specidifed but not the task."
-    )
+      if isinstance(model, str):
+        task = get_task_from_readme(model)
+      else:
+        raise RuntimeError(
+          "task must be provided when the type of model is PreTrained model"
+        )
   
   pipe_wrapper = PIPELINE_WRAPPER_MAPPPING.get(task)
   if framework is None:

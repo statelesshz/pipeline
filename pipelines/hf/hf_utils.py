@@ -31,8 +31,6 @@ def create_transformers_pipeline(task: str=None,
     model_name_or_path = download_from_repo(
       model, revision=revision, cache_dir=cache_dir, force_download=force_download
     )
-    if task is None:
-      task = get_task_from_readme(model_name_or_path)
   else:
     model_name_or_path = model
 
