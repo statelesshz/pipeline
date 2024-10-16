@@ -106,6 +106,12 @@ for task in [
   "image-to-text",
   "text2text-generation",
   "token-classification",
+  "fill-mask",
+  "question-answering",
+  "summarization",
+  "table-question-answering",
+  "translation",
+  "text-classification",
 ]:
   pipeline_registry.register(
     task,
