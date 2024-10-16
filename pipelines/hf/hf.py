@@ -437,3 +437,249 @@ class MaskGenerationPipeline(HFPipeline):
     )
 
     return res
+
+
+class ZeroShotImageClassificationPipeline(HFPipeline):
+  def __init__(self,
+               task: str = None, 
+               model: str = None,
+               config: str = None, 
+               tokenizer: str = None, 
+               feature_extractor: str = None, 
+               image_processor: str = None,
+               revision: str = None,
+               framework: str = None, 
+               backend: str = None,
+               model_kwargs: Dict = None,
+               **kwargs):
+    self.task = task
+    self.model = model
+    self.config = config
+    self.tokenizer =tokenizer
+    self.feature_extractor = feature_extractor
+    self.image_processor = image_processor
+    self.revision = revision
+    self.framework = "pt"
+    self.backend = "transformers"
+    self.model_kwargs = copy.deepcopy(model_kwargs)
+    self.kwargs = copy.deepcopy(kwargs)
+
+    # access pipeline here to trigger download and load
+    self.pipeline
+  
+  def __call__(
+    self,
+    images: Union[str, List[str], "Image", List["Image"]],
+    **kwargs,
+  ) -> Union[str, List[str]]:
+    res = self._run_pipeline(
+      images,
+      **kwargs,
+    )
+
+    return res
+
+
+class FeatureExtractionPipeline(HFPipeline):
+  def __init__(self,
+               task: str = None, 
+               model: str = None,
+               config: str = None, 
+               tokenizer: str = None, 
+               feature_extractor: str = None, 
+               image_processor: str = None,
+               revision: str = None,
+               framework: str = None, 
+               backend: str = None,
+               model_kwargs: Dict = None,
+               **kwargs):
+    self.task = task
+    self.model = model
+    self.config = config
+    self.tokenizer =tokenizer
+    self.feature_extractor = feature_extractor
+    self.image_processor = image_processor
+    self.revision = revision
+    self.framework = "pt"
+    self.backend = "transformers"
+    self.model_kwargs = copy.deepcopy(model_kwargs)
+    self.kwargs = copy.deepcopy(kwargs)
+
+    # access pipeline here to trigger download and load
+    self.pipeline
+
+  def __call__(
+    self,
+    *args,
+    **kwargs,
+  ) -> Union[str, List[str]]:
+    res = self._run_pipeline(
+      *args,
+      **kwargs,
+    )
+
+    return res
+
+
+class ImageClassificationPipeline(HFPipeline):
+  def __init__(self,
+               task: str = None, 
+               model: str = None,
+               config: str = None, 
+               tokenizer: str = None, 
+               feature_extractor: str = None, 
+               image_processor: str = None,
+               revision: str = None,
+               framework: str = None, 
+               backend: str = None,
+               model_kwargs: Dict = None,
+               **kwargs):
+    self.task = task
+    self.model = model
+    self.config = config
+    self.tokenizer =tokenizer
+    self.feature_extractor = feature_extractor
+    self.image_processor = image_processor
+    self.revision = revision
+    self.framework = "pt"
+    self.backend = "transformers"
+    self.model_kwargs = copy.deepcopy(model_kwargs)
+    self.kwargs = copy.deepcopy(kwargs)
+
+    # access pipeline here to trigger download and load
+    self.pipeline
+
+  def __call__(
+    self,
+    images: Union[str, List[str], "Image.Image", List["Image.Image"]],
+    **kwargs,
+  ) -> Union[str, List[str]]:
+    res = self._run_pipeline(
+      images,
+      **kwargs,
+    )
+
+    return res
+
+
+class ImageToTextPipeline(HFPipeline):
+  def __init__(self,
+               task: str = None, 
+               model: str = None,
+               config: str = None, 
+               tokenizer: str = None, 
+               feature_extractor: str = None, 
+               image_processor: str = None,
+               revision: str = None,
+               framework: str = None, 
+               backend: str = None,
+               model_kwargs: Dict = None,
+               **kwargs):
+    self.task = task
+    self.model = model
+    self.config = config
+    self.tokenizer =tokenizer
+    self.feature_extractor = feature_extractor
+    self.image_processor = image_processor
+    self.revision = revision
+    self.framework = "pt"
+    self.backend = "transformers"
+    self.model_kwargs = copy.deepcopy(model_kwargs)
+    self.kwargs = copy.deepcopy(kwargs)
+
+    # access pipeline here to trigger download and load
+    self.pipeline
+
+  def __call__(
+    self,
+    images: Union[str, List[str], "Image.Image", List["Image.Image"]],
+    **kwargs,
+  ) -> Union[str, List[str]]:
+    res = self._run_pipeline(
+      images,
+      **kwargs,
+    )
+
+    return res
+
+
+class Text2TextGenerationPipeline(HFPipeline):
+  def __init__(self,
+               task: str = None, 
+               model: str = None,
+               config: str = None, 
+               tokenizer: str = None, 
+               feature_extractor: str = None, 
+               image_processor: str = None,
+               revision: str = None,
+               framework: str = None, 
+               backend: str = None,
+               model_kwargs: Dict = None,
+               **kwargs):
+    self.task = task
+    self.model = model
+    self.config = config
+    self.tokenizer =tokenizer
+    self.feature_extractor = feature_extractor
+    self.image_processor = image_processor
+    self.revision = revision
+    self.framework = "pt"
+    self.backend = "transformers"
+    self.model_kwargs = copy.deepcopy(model_kwargs)
+    self.kwargs = copy.deepcopy(kwargs)
+
+    # access pipeline here to trigger download and load
+    self.pipeline
+
+  def __call__(
+    self,
+    *args,
+    **kwargs,
+  ) -> Union[str, List[str]]:
+    res = self._run_pipeline(
+      *args,
+      **kwargs,
+    )
+
+    return res
+
+
+class TokenClassificationPipeline(HFPipeline):
+  def __init__(self,
+               task: str = None, 
+               model: str = None,
+               config: str = None, 
+               tokenizer: str = None, 
+               feature_extractor: str = None, 
+               image_processor: str = None,
+               revision: str = None,
+               framework: str = None, 
+               backend: str = None,
+               model_kwargs: Dict = None,
+               **kwargs):
+    self.task = task
+    self.model = model
+    self.config = config
+    self.tokenizer =tokenizer
+    self.feature_extractor = feature_extractor
+    self.image_processor = image_processor
+    self.revision = revision
+    self.framework = "pt"
+    self.backend = "transformers"
+    self.model_kwargs = copy.deepcopy(model_kwargs)
+    self.kwargs = copy.deepcopy(kwargs)
+
+    # access pipeline here to trigger download and load
+    self.pipeline
+
+  def __call__(
+    self,
+    inputs: Union[str, List[str]],
+    **kwargs,
+  ) -> Union[str, List[str]]:
+    res = self._run_pipeline(
+      inputs,
+      **kwargs,
+    )
+
+    return res

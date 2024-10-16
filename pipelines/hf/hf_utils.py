@@ -100,6 +100,12 @@ for task in [
   "depth-estimation",
   "image-to-image",
   "mask-generation",
+  "zero-shot-image-classification",
+  "feature-extraction",
+  "image-classification",
+  "image-to-text",
+  "text2text-generation",
+  "token-classification",
 ]:
   pipeline_registry.register(
     task,
