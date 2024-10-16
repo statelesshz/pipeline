@@ -6,7 +6,15 @@ from loguru import logger
 from openmind.utils.hub import OpenMindHub
 
 from .base import BasePipelineWrapper
-from .hf import PipelineWrapper, TextGenerationPipeline
+from .hf import (PipelineWrapper,
+                TextGenerationPipeline,
+                VisualQuestionAnsweringPipeline,
+                ZeroShotObjectDetectionPipeline,
+                ZeroShotClassificationPipeline,
+                DepthEstimationPipeline,
+                ImageToImagePipeline,
+                MaskGenerationPipeline,
+                 )
 from .utils import get_task_from_readme
 
 
@@ -38,11 +46,113 @@ register_pipeline_wrapper(
   )
 )
 
+register_pipeline_wrapper(
+  "visual-question-answering",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/blip_vqa_base@4450392",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "zero-shot-object-detection",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/owlvit_base_patch32@ff06496",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "zero-shot-classification",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/deberta_v3_large_zeroshot_v2.0@d38d6f4",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "depth-estimation",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/dpt_large@270fa97",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "image-to-image",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/swin2SR_classical_sr_x2_64@407e816",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "mask-generation",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/sam_vit_base@d0ad399",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
 register_pipeline(
   "text-generation",
   "pt",
   "transformers",
   TextGenerationPipeline
+)
+
+register_pipeline(
+  "visual-question-answering",
+  "pt",
+  "transformers",
+  VisualQuestionAnsweringPipeline
+)
+
+register_pipeline(
+  "zero-shot-object-detection",
+  "pt",
+  "transformers",
+  ZeroShotObjectDetectionPipeline
+)
+
+register_pipeline(
+  "zero-shot-classification",
+  "pt",
+  "transformers",
+  ZeroShotClassificationPipeline
+)
+
+register_pipeline(
+  "depth-estimation",
+  "pt",
+  "transformers",
+  DepthEstimationPipeline
+)
+
+register_pipeline(
+  "image-to-image",
+  "pt",
+  "transformers",
+  ImageToImagePipeline
+)
+
+register_pipeline(
+  "mask-generation",
+  "pt",
+  "transformers",
+  MaskGenerationPipeline
 )
 
 def get_pipeline_wrapper(
