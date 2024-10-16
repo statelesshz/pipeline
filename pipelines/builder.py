@@ -14,6 +14,12 @@ from .hf import (PipelineWrapper,
                 DepthEstimationPipeline,
                 ImageToImagePipeline,
                 MaskGenerationPipeline,
+                ZeroShotImageClassificationPipeline,
+                FeatureExtractionPipeline,
+                ImageClassificationPipeline,
+                ImageToTextPipeline,
+                Text2TextGenerationPipeline,
+                TokenClassificationPipeline,
                  )
 from .utils import get_task_from_readme
 
@@ -106,6 +112,66 @@ register_pipeline_wrapper(
   )
 )
 
+register_pipeline_wrapper(
+  "zero-shot-image-classification",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/siglip_so400m_patch14_384@b4099dd",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "feature-extraction",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/xlnet_base_cased@bc7408f",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "image-classification",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/beit_base_patch16_224@a46c2b5",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "image-to-text",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/blip-image-captioning-large@059b23b",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "text2text-generation",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/flan_t5_base@d15ab63",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "token-classification",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/camembert_ner@1390d33",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
 register_pipeline(
   "text-generation",
   "pt",
@@ -153,6 +219,48 @@ register_pipeline(
   "pt",
   "transformers",
   MaskGenerationPipeline
+)
+
+register_pipeline(
+  "zero-shot-image-classification",
+  "pt",
+  "transformers",
+  ZeroShotImageClassificationPipeline
+)
+
+register_pipeline(
+  "feature-extraction",
+  "pt",
+  "transformers",
+  FeatureExtractionPipeline
+)
+
+register_pipeline(
+  "image-classification",
+  "pt",
+  "transformers",
+  ImageClassificationPipeline
+)
+
+register_pipeline(
+  "image-to-text",
+  "pt",
+  "transformers",
+  ImageToTextPipeline
+)
+
+register_pipeline(
+  "text2text-generation",
+  "pt",
+  "transformers",
+  Text2TextGenerationPipeline
+)
+
+register_pipeline(
+  "token-classification",
+  "pt",
+  "transformers",
+  TokenClassificationPipeline
 )
 
 def get_pipeline_wrapper(
