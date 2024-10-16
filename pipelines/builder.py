@@ -6,21 +6,28 @@ from loguru import logger
 from openmind.utils.hub import OpenMindHub
 
 from .base import BasePipelineWrapper
-from .hf import (PipelineWrapper,
-                TextGenerationPipeline,
-                VisualQuestionAnsweringPipeline,
-                ZeroShotObjectDetectionPipeline,
-                ZeroShotClassificationPipeline,
-                DepthEstimationPipeline,
-                ImageToImagePipeline,
-                MaskGenerationPipeline,
-                ZeroShotImageClassificationPipeline,
-                FeatureExtractionPipeline,
-                ImageClassificationPipeline,
-                ImageToTextPipeline,
-                Text2TextGenerationPipeline,
-                TokenClassificationPipeline,
-                 )
+from .hf import (
+  PipelineWrapper,
+  TextGenerationPipeline,
+  VisualQuestionAnsweringPipeline,
+  ZeroShotObjectDetectionPipeline,
+  ZeroShotClassificationPipeline,
+  DepthEstimationPipeline,
+  ImageToImagePipeline,
+  MaskGenerationPipeline,
+  ZeroShotImageClassificationPipeline,
+  FeatureExtractionPipeline,
+  ImageClassificationPipeline,
+  ImageToTextPipeline,
+  Text2TextGenerationPipeline,
+  TokenClassificationPipeline,
+  FillMaskPipeline,
+  QuestionAnsweringPipeline,
+  SummarizationPipeline,
+  TableQuestionAnsweringPipeline,
+  TranslationPipeline,
+  TextClassificationPipeline,
+)
 from .utils import get_task_from_readme
 
 
@@ -172,6 +179,66 @@ register_pipeline_wrapper(
   )
 )
 
+register_pipeline_wrapper(
+  "fill-mask",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/bert_base_uncased@42ad83b",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "question-answering",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/roberta_base_squad2@ba973aa",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "summarization",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/bart_large_cnn@b39bb57",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "table-question-answering",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/tapas_base_finetuned_wtq@17e5ded",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "translation",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/t5_base@68829a3",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
+register_pipeline_wrapper(
+  "text-classification",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="PyTorch-NPU/distilbert_base_uncased_finetuned_sst_2_english@5a5cb27",
+    default_framework="pt",
+    default_backend="transformers",
+  )
+)
+
 register_pipeline(
   "text-generation",
   "pt",
@@ -261,6 +328,48 @@ register_pipeline(
   "pt",
   "transformers",
   TokenClassificationPipeline
+)
+
+register_pipeline(
+  "fill-mask",
+  "pt",
+  "transformers",
+  FillMaskPipeline
+)
+
+register_pipeline(
+  "question-answering",
+  "pt",
+  "transformers",
+  QuestionAnsweringPipeline
+)
+
+register_pipeline(
+  "summarization",
+  "pt",
+  "transformers",
+  SummarizationPipeline
+)
+
+register_pipeline(
+  "table-question-answering",
+  "pt",
+  "transformers",
+  TableQuestionAnsweringPipeline
+)
+
+register_pipeline(
+  "translation",
+  "pt",
+  "transformers",
+  TranslationPipeline
+)
+
+register_pipeline(
+  "text-classification",
+  "pt",
+  "transformers",
+  TextClassificationPipeline
 )
 
 def get_pipeline_wrapper(

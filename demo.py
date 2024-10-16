@@ -160,6 +160,144 @@ def token_classification_with_only_task():
   res = pipe("Apple est créée le 1er avril 1976 dans le garage de la maison d'enfance de Steve Jobs à Los Altos en Californie par Steve Jobs, Steve Wozniak et Ronald Wayne14, puis constituée sous forme de société le 3 janvier 1977 à l'origine sous le nom d'Apple Computer, mais pour ses 30 ans et pour refléter la diversification de ses produits, le mot « computer » est retiré le 9 janvier 2015.")
   print(res)
 
+def fill_mask_with_only_task():
+  pipe = pipeline(task="fill-mask", device="npu:0")
+  res = pipe(
+    inputs="This is a simple [MASK]."
+  )
+  print(res)
+
+def fill_mask_with_task_model_framework_backend():
+  pipe = pipeline(
+    task="fill-mask",
+    model="PyTorch-NPU/bert_base_uncased",
+    framework="pt",
+    backend="transformers",
+    device="npu:0"
+  )
+  res = pipe(
+    inputs="This is a simple [MASK]."
+  )
+  print(res)
+
+def question_answering_with_only_task():
+  pipe = pipeline(task="question-answering", device="npu:0")
+  res = pipe(
+    question="Where do I live?",
+    context="My name is Wolfgang and I live in Berlin."
+  )
+  print(res)
+
+def question_answering_with_task_model_framework_backend():
+  pipe = pipeline(
+    task="question-answering",
+    model="PyTorch-NPU/roberta_base_squad2",
+    framework="pt",
+    backend="transformers",
+    device="npu:0"
+  )
+  res = pipe(
+    question="Where do I live?",
+    context="My name is Wolfgang and I live in Berlin."
+  )
+  print(res)
+
+def summarization_with_oly_task():
+  pipe = pipeline(task="summarization", device="npu:0")
+  res = pipe(
+    inputs="An apple a day, keeps the doctor away",
+    min_length=5,
+    max_length=20,
+  )
+  print(res)
+
+def summarization_with_task_model_framework_backend():
+  pipe = pipeline(
+    task="summarization",
+    model="PyTorch-NPU/bart_large_cnn",
+    framework="pt",
+    backend="transformers",
+    device="npu:0"
+  )
+  res = pipe(
+    inputs="An apple a day, keeps the doctor away",
+    min_length=5,
+    max_length=20,
+  )
+  print(res)
+
+def table_question_answering_with_only_task():
+  pipe = pipeline(task="table-question-answering", device="npu:0")
+  res = pipe(
+    query="How many stars does the transformers repository have?",
+    table={
+        "Repository": ["Transformers", "Datasets", "Tokenizers"],
+        "Stars": ["36542", "4512", "3934"],
+        "Contributors": ["651", "77", "34"],
+        "Programming language": ["Python", "Python", "Rust, Python and NodeJS"],
+    },
+  )
+  print(res)
+
+def table_question_answering_with_task_model_framework_backend():
+  pipe = pipeline(
+    task="table-question-answering",
+    model="PyTorch-NPU/tapas_base_finetuned_wtq",
+    framework="pt",
+    backend="transformers",
+    device="npu:0"
+  )
+  res = pipe(
+    query="How many stars does the transformers repository have?",
+    table={
+        "Repository": ["Transformers", "Datasets", "Tokenizers"],
+        "Stars": ["36542", "4512", "3934"],
+        "Contributors": ["651", "77", "34"],
+        "Programming language": ["Python", "Python", "Rust, Python and NodeJS"],
+    },
+  )
+  print(res)
+
+def translation_with_only_task():
+  pipe = pipeline(task="translation", device="npu:0")
+  res = pipe(
+    "How old are you?"
+  )
+  print(res)
+
+def translation_with_task_model_framework_backend():
+  pipe = pipeline(
+    task="translation",
+    model="PyTorch-NPU/t5_base",
+    framework="pt",
+    backend="transformers",
+    device="npu:0"
+  )
+  res = pipe(
+    "How old are you?"
+  )
+  print(res)
+
+def text_classification_with_only_task():
+  pipe = pipeline(task="text-classification", device="npu:0")
+  res = pipe(
+    "This movie is disgustingly good !"
+  )
+  print(res)
+
+def text_classification_with_task_model_framework_backend():
+  pipe = pipeline(
+    task="text-classification",
+    model="PyTorch-NPU/distilbert_base_uncased_finetuned_sst_2_english",
+    framework="pt",
+    backend="transformers",
+    device="npu:0"
+  )
+  res = pipe(
+    "This movie is disgustingly good !"
+  )
+  print(res)
+
 if __name__ == "__main__":
   # text_generation_with_only_task()
   # text_generation_with_only_model()
@@ -176,3 +314,15 @@ if __name__ == "__main__":
   # image_to_text_with_only_task()
   # text2text_generation_with_only_task()
   # token_classification_with_only_task()
+  # fill_mask_with_only_task()
+  # fill_mask_with_task_model_framework_backend()
+  # question_answering_with_only_task()
+  # question_answering_with_task_model_framework_backend()
+  # summarization_with_oly_task()
+  # summarization_with_task_model_framework_backend()
+  # table_question_answering_with_only_task()
+  # table_question_answering_with_task_model_framework_backend()
+  # translation_with_only_task()
+  # translation_with_task_model_framework_backend()
+  # text_classification_with_only_task()
+  # text_classification_with_task_model_framework_backend()
