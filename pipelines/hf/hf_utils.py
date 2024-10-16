@@ -94,6 +94,12 @@ def create_transformers_pipeline(task: str=None,
 
 for task in [
   "text-generation",
+  "visual-question-answering",
+  "zero-shot-object-detection",
+  "zero-shot-classification",
+  "depth-estimation",
+  "image-to-image",
+  "mask-generation",
 ]:
   pipeline_registry.register(
     task,
