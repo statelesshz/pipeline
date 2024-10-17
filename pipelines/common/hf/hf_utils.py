@@ -1,6 +1,8 @@
 from typing import Dict
+
 from openmind import AutoTokenizer
-from ..utils import Registry, download_from_repo, get_task_from_readme
+
+from ...utils import Registry, download_from_repo
 
 
 pipeline_registry = Registry()

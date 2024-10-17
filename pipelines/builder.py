@@ -3,7 +3,6 @@ from typing import Optional, Literal, Type, Dict, Any
 
 from loguru import logger
 
-from openmind.utils.hub import OpenMindHub
 
 from .base import BasePipelineWrapper
 from .common.hf import (

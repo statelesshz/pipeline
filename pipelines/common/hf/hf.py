@@ -6,7 +6,7 @@ from loguru import logger
 
 from openmind.utils import is_vision_available
 
-from ..base import BasePipelineWrapper, PTBasePipeline
+from ...base import BasePipelineWrapper, PTBasePipeline
 from .hf_utils import pipeline_registry
 
 if is_vision_available():
