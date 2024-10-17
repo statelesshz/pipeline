@@ -54,7 +54,7 @@ class MSPipeline(MSBasePipeline):
     
     logger.info(
       f"Creating pipeline for {self.task}(framework={self.framework}, backend={self.backend},"
-      f" model={self.model}, revision={self.revision}).\n"
+      f" model={self.model}, revision={self.kwargs.get('revision')}).\n"
       "openMind download might take a while, please be patient..."
     )
 
@@ -74,32 +74,7 @@ class MSPipeline(MSBasePipeline):
     return pipeline
 
   def _run_pipeline(self, *args, **kwargs):
-    # TODO: do we need this?
-    try:
-      import torch
-      # from accelerate import
-      from accelerate.utils import is_npu_available
-      if is_npu_available():
-        import torch_npu
-    except ImportError as e:
-      # TODO: add more user-friendly error messages
-      raise e
-
     return self.pipeline(*args, **kwargs)
-
-
-def _get_generated_text(res):
-    if isinstance(res, str):
-        return res
-    elif isinstance(res, dict):
-        return res["generated_text"]
-    elif isinstance(res, list):
-        if len(res) == 1:
-            return _get_generated_text(res[0])
-        else:
-            return [_get_generated_text(r) for r in res]
-    else:
-        raise ValueError(f"Unsupported result type in _get_generated_text: {type(res)}")
 
 
 class TextGenerationPipeline(MSPipeline):
@@ -126,29 +101,11 @@ class TextGenerationPipeline(MSPipeline):
   def __call__(
     self,
     inputs: Union[str, List[str]],
-    top_k: Optional[int] = None,
-    top_p: Optional[float] = None,
-    temperature: Optional[float] = 1.0,
-    repetition_penalty: Optional[float] = None,
-    max_new_tokens: Optional[int] = None,
-    max_time: Optional[float] = None,
-    return_full_text: bool = True,
-    num_return_sequences: int = 1,
-    do_sample: bool = True,
     **kwargs,
   ) -> Union[str, List[str]]:
     res = self._run_pipeline(
       inputs,
-      top_k=top_k,
-      top_p=top_p,
-      temperature=temperature,
-      repetition_penalty=repetition_penalty,
-      max_new_tokens=max_new_tokens,
-      max_time=max_time,
-      return_full_text=return_full_text,
-      num_return_sequences=num_return_sequences,
-      do_sample=do_sample,
       **kwargs,
     )
 
-    return _get_generated_text(res)
+    return res

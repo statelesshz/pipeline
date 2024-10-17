@@ -43,9 +43,9 @@ def register_pipeline_wrapper(task: str, wrapper: BasePipelineWrapper):
 def register_pipeline(task: str, framework: str, backend: str, pipeline: Type, **kwargs):
   if task not in PIPELINE_MAPPING:
     PIPELINE_MAPPING[task] = {}
-    if framework not in PIPELINE_MAPPING[task]:
-      PIPELINE_MAPPING[task][framework] = {}
-    PIPELINE_MAPPING[task][framework][backend] = pipeline
+  if framework not in PIPELINE_MAPPING[task]:
+    PIPELINE_MAPPING[task][framework] = {}
+  PIPELINE_MAPPING[task][framework][backend] = pipeline
 
 
 register_pipeline_wrapper(
@@ -369,16 +369,6 @@ register_pipeline(
   "pt",
   "transformers",
   TextClassificationPipeline
-)
-
-register_pipeline_wrapper(
-  "text-generation",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="MindSpore-Lab/glm2_6b@59f44ec",
-    default_framework="ms",
-    default_backend="mindformers",
-  )
 )
 
 register_pipeline(

@@ -63,7 +63,7 @@ for task in [
   pipeline_registry.register(
     task,
     {
-      "pt": {
+      "ms": {
         "mindformers": create_mindformers_pipeline,
       },
     }
