@@ -6,7 +6,7 @@ from loguru import logger
 from openmind.utils.hub import OpenMindHub
 
 from .base import BasePipelineWrapper
-from .hf import (
+from .common.hf import (
   PipelineWrapper,
   TextGenerationPipeline,
   VisualQuestionAnsweringPipeline,
