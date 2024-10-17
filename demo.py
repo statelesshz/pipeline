@@ -24,7 +24,7 @@ def text_generation_with_only_model():
   )
   print(res)
 
-def text_generation_with_task_model_framework_backend():
+def text_generation_with_task_model_framework_pt():
   pipe = pipeline(
     task="text-generation",
     model="/home/lynn/github/qwen2.5-0.5b-instruct",
@@ -42,7 +42,7 @@ def text_generation_with_task_model_framework_backend():
   )
   print(res)
 
-def visual_question_answering_with_task_model_framework_backend():
+def visual_question_answering_with_task_model_framework_pt():
   pipe = pipeline(
     task="visual-question-answering",
     model="/home2/cqq/models_save/blip-vqa-base",
@@ -58,7 +58,7 @@ def visual_question_answering_with_task_model_framework_backend():
   )
   print(res)
 
-def zero_shot_object_detection_with_task_model_framework_backend():
+def zero_shot_object_detection_with_task_model_framework_pt():
   pipe = pipeline(
     task="zero-shot-object-detection",
     model="/home2/cqq/models_save/owlvit-base-patch32",
@@ -73,7 +73,7 @@ def zero_shot_object_detection_with_task_model_framework_backend():
   )
   print(res)
 
-def zero_shot_classification_with_task_model_framework_backend():
+def zero_shot_classification_with_task_model_framework_pt():
   pipe = pipeline(
     task="zero-shot-classification",
     model="/home2/cqq/models_save/deberta-v3-large-zeroshot-v2.0",
@@ -87,7 +87,7 @@ def zero_shot_classification_with_task_model_framework_backend():
   )
   print(res)
 
-def depth_estimation_with_task_model_framework_backend():
+def depth_estimation_with_task_model_framework_pt():
   pipe = pipeline(
     task="depth-estimation",
     model="/home2/cqq/models_save/dpt-large",
@@ -100,7 +100,7 @@ def depth_estimation_with_task_model_framework_backend():
   )
   print(res)
 
-def image_to_image_with_task_model_framework_backend():
+def image_to_image_with_task_model_framework_pt():
   pipe = pipeline(
     task="image-to-image",
     model="/home2/cqq/models_save/swin2SR-classical-sr-x2-64",
@@ -113,7 +113,7 @@ def image_to_image_with_task_model_framework_backend():
   )
   print(res)
 
-def mask_generation_with_task_model_framework_backend():
+def mask_generation_with_task_model_framework_pt():
   pipe = pipeline(
     task="mask-generation",
     model="/home2/cqq/models_save/sam-vit-base",
@@ -167,7 +167,7 @@ def fill_mask_with_only_task():
   )
   print(res)
 
-def fill_mask_with_task_model_framework_backend():
+def fill_mask_with_task_model_framework_pt():
   pipe = pipeline(
     task="fill-mask",
     model="PyTorch-NPU/bert_base_uncased",
@@ -188,7 +188,7 @@ def question_answering_with_only_task():
   )
   print(res)
 
-def question_answering_with_task_model_framework_backend():
+def question_answering_with_task_model_framework_pt():
   pipe = pipeline(
     task="question-answering",
     model="PyTorch-NPU/roberta_base_squad2",
@@ -211,7 +211,7 @@ def summarization_with_oly_task():
   )
   print(res)
 
-def summarization_with_task_model_framework_backend():
+def summarization_with_task_model_framework_pt():
   pipe = pipeline(
     task="summarization",
     model="PyTorch-NPU/bart_large_cnn",
@@ -239,7 +239,7 @@ def table_question_answering_with_only_task():
   )
   print(res)
 
-def table_question_answering_with_task_model_framework_backend():
+def table_question_answering_with_task_model_framework_pt():
   pipe = pipeline(
     task="table-question-answering",
     model="PyTorch-NPU/tapas_base_finetuned_wtq",
@@ -265,7 +265,7 @@ def translation_with_only_task():
   )
   print(res)
 
-def translation_with_task_model_framework_backend():
+def translation_with_task_model_framework_pt():
   pipe = pipeline(
     task="translation",
     model="PyTorch-NPU/t5_base",
@@ -285,7 +285,7 @@ def text_classification_with_only_task():
   )
   print(res)
 
-def text_classification_with_task_model_framework_backend():
+def text_classification_with_task_model_framework_pt():
   pipe = pipeline(
     task="text-classification",
     model="PyTorch-NPU/distilbert_base_uncased_finetuned_sst_2_english",
@@ -298,16 +298,29 @@ def text_classification_with_task_model_framework_backend():
   )
   print(res)
 
+def text_classification_with_task_model_framework_ms():
+  pipe = pipeline(
+    task="text-classification",
+    model="/home2/cqq/models_save/glm2_6b_ms",
+    framework="pt",
+    backend="mindformers",
+    device_id=0
+  )
+  res = pipe(
+    "Give me some advice on how to stay healthy."
+  )
+  print(res)
+
 if __name__ == "__main__":
   # text_generation_with_only_task()
   # text_generation_with_only_model()
-  # text_generation_with_task_model_framework_backend()
-  # visual_question_answering_with_task_model_framework_backend()
-  # zero_shot_object_detection_with_task_model_framework_backend()
-  # zero_shot_classification_with_task_model_framework_backend()
-  # depth_estimation_with_task_model_framework_backend()
-  # image_to_image_with_task_model_framework_backend()
-  # mask_generation_with_task_model_framework_backend()
+  # text_generation_with_task_model_framework_pt()
+  # visual_question_answering_with_task_model_framework_pt()
+  # zero_shot_object_detection_with_task_model_framework_pt()
+  # zero_shot_classification_with_task_model_framework_pt()
+  # depth_estimation_with_task_model_framework_pt()
+  # image_to_image_with_task_model_framework_pt()
+  # mask_generation_with_task_model_framework_pt()
   # zero_shot_image_classification_with_only_task()
   # feature_extraction_with_only_task()
   # image_classification_with_only_task()
@@ -315,14 +328,15 @@ if __name__ == "__main__":
   # text2text_generation_with_only_task()
   # token_classification_with_only_task()
   # fill_mask_with_only_task()
-  # fill_mask_with_task_model_framework_backend()
+  # fill_mask_with_task_model_framework_pt()
   # question_answering_with_only_task()
-  # question_answering_with_task_model_framework_backend()
+  # question_answering_with_task_model_framework_pt()
   # summarization_with_oly_task()
-  # summarization_with_task_model_framework_backend()
+  # summarization_with_task_model_framework_pt()
   # table_question_answering_with_only_task()
-  # table_question_answering_with_task_model_framework_backend()
+  # table_question_answering_with_task_model_framework_pt()
   # translation_with_only_task()
-  # translation_with_task_model_framework_backend()
+  # translation_with_task_model_framework_pt()
   # text_classification_with_only_task()
-  # text_classification_with_task_model_framework_backend()
+  # text_classification_with_task_model_framework_pt()
+  text_classification_with_task_model_framework_ms()
