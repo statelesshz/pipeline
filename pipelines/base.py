@@ -35,3 +35,11 @@ class PTBasePipeline(BasePipeline):
                 **kwargs):
       super().__init__(task, **kwargs)
       self.framework = "pt"
+
+
+class MSBasePipeline(BasePipeline):
+   def __init__(self,
+                task: str,
+                **kwargs):
+      super().__init__(task, **kwargs)
+      self.framework = "ms"

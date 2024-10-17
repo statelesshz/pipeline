@@ -1,4 +1,3 @@
-import os.path
 from typing import Optional, Literal, Type, Dict, Any
 
 from loguru import logger
@@ -27,6 +26,7 @@ from .common.hf import (
   TranslationPipeline,
   TextClassificationPipeline,
 )
+from .common.ms import TextGenerationPipeline as MSTextGenerationPipeline
 from .utils import get_task_from_readme
 
 
@@ -369,6 +369,23 @@ register_pipeline(
   "pt",
   "transformers",
   TextClassificationPipeline
+)
+
+register_pipeline_wrapper(
+  "text-generation",
+  PipelineWrapper(
+    # <model_name>[@<revision>] or <model_name>
+    default_model="MindSpore-Lab/glm2_6b@59f44ec",
+    default_framework="ms",
+    default_backend="mindformers",
+  )
+)
+
+register_pipeline(
+  "text-generation",
+  "ms",
+  "mindformers",
+  MSTextGenerationPipeline
 )
 
 def get_pipeline_wrapper(
