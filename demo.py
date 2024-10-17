@@ -1,7 +1,7 @@
 from pipelines import pipeline
 
 def text_generation_with_only_task():
-  pipe = pipeline(task="text-generation", device="npu:0")
+  pipe = pipeline(task="text-generation", device="cuda:0")
   res = pipe(
     inputs=[{
       "role": "user",
@@ -30,7 +30,7 @@ def text_generation_with_task_model_framework_pt():
     model="/home/lynn/github/qwen2.5-0.5b-instruct",
     framework="pt",
     backend="transformers",
-    device="npu:0"
+    device="cuda:0"
   )
   res = pipe(
     inputs=[{
@@ -314,7 +314,7 @@ def text_classification_with_task_model_framework_ms():
 if __name__ == "__main__":
   # text_generation_with_only_task()
   # text_generation_with_only_model()
-  # text_generation_with_task_model_framework_pt()
+  text_generation_with_task_model_framework_pt()
   # visual_question_answering_with_task_model_framework_pt()
   # zero_shot_object_detection_with_task_model_framework_pt()
   # zero_shot_classification_with_task_model_framework_pt()
@@ -339,4 +339,4 @@ if __name__ == "__main__":
   # translation_with_task_model_framework_pt()
   # text_classification_with_only_task()
   # text_classification_with_task_model_framework_pt()
-  text_classification_with_task_model_framework_ms()
+  # text_classification_with_task_model_framework_ms()

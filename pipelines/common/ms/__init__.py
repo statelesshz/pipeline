@@ -1,1 +1,1 @@
-from .ms import PipelineWrapper, TextGenerationPipeline
+from .ms import TextGenerationPipeline

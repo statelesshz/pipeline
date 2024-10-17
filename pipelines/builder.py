@@ -3,9 +3,8 @@ from typing import Optional, Literal, Type, Dict, Any
 from loguru import logger
 
 
-from .base import BasePipelineWrapper
+from .base import pipeline_wrapper_registry
 from .common.hf import (
-  PipelineWrapper,
   TextGenerationPipeline,
   VisualQuestionAnsweringPipeline,
   ZeroShotObjectDetectionPipeline,
@@ -30,14 +29,7 @@ from .common.ms import TextGenerationPipeline as MSTextGenerationPipeline
 from .utils import get_task_from_readme
 
 
-# task, BasePipelineWrapper
-PIPELINE_WRAPPER_MAPPPING = {}
 PIPELINE_MAPPING = {}
-
-
-def register_pipeline_wrapper(task: str, wrapper: BasePipelineWrapper):
-  wrapper.task = task
-  PIPELINE_WRAPPER_MAPPPING[task] = wrapper
 
 
 def register_pipeline(task: str, framework: str, backend: str, pipeline: Type, **kwargs):
@@ -46,197 +38,6 @@ def register_pipeline(task: str, framework: str, backend: str, pipeline: Type, *
   if framework not in PIPELINE_MAPPING[task]:
     PIPELINE_MAPPING[task][framework] = {}
   PIPELINE_MAPPING[task][framework][backend] = pipeline
-
-
-register_pipeline_wrapper(
-  "text-generation",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="Baichuan/Baichuan2_7b_chat_pt@ca161b7",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "visual-question-answering",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/blip_vqa_base@4450392",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "zero-shot-object-detection",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/owlvit_base_patch32@ff06496",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "zero-shot-classification",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/deberta_v3_large_zeroshot_v2.0@d38d6f4",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "depth-estimation",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/dpt_large@270fa97",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "image-to-image",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/swin2SR_classical_sr_x2_64@407e816",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "mask-generation",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/sam_vit_base@d0ad399",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "zero-shot-image-classification",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/siglip_so400m_patch14_384@b4099dd",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "feature-extraction",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/xlnet_base_cased@bc7408f",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "image-classification",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/beit_base_patch16_224@a46c2b5",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "image-to-text",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/blip-image-captioning-large@059b23b",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "text2text-generation",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/flan_t5_base@d15ab63",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "token-classification",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/camembert_ner@1390d33",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "fill-mask",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/bert_base_uncased@42ad83b",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "question-answering",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/roberta_base_squad2@ba973aa",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "summarization",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/bart_large_cnn@b39bb57",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "table-question-answering",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/tapas_base_finetuned_wtq@17e5ded",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "translation",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/t5_base@68829a3",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
-
-register_pipeline_wrapper(
-  "text-classification",
-  PipelineWrapper(
-    # <model_name>[@<revision>] or <model_name>
-    default_model="PyTorch-NPU/distilbert_base_uncased_finetuned_sst_2_english@5a5cb27",
-    default_framework="pt",
-    default_backend="transformers",
-  )
-)
 
 register_pipeline(
   "text-generation",
@@ -425,9 +226,10 @@ def get_pipeline_wrapper(
           "task must be provided when the type of model is PreTrained model"
         )
   
-  pipe_wrapper = PIPELINE_WRAPPER_MAPPPING.get(task)
+  pipe_wrapper_cls = pipeline_wrapper_registry.get(task)
+
   if framework is None:
-    framework = pipe_wrapper.default_framework
+    framework = pipe_wrapper_cls.framework
     if framework is None:
       raise RuntimeError(
         "Framework is not specified and the pipeline wrapper for {task} does not specify a default framework"
@@ -435,7 +237,7 @@ def get_pipeline_wrapper(
     logger.info(f"Framework is not specified, use default framework {framework} for task {task}")
 
   if model is None:
-    model = pipe_wrapper.default_model
+    model = pipe_wrapper_cls.model_id
     if model is None:
       raise ValueError(f"no default model for {task}")
     if "@" in model:
@@ -444,7 +246,7 @@ def get_pipeline_wrapper(
     logger.info(f"Model is not specified, use default model {model}")
   
   if backend is None:
-    backend = pipe_wrapper.default_backend
+    backend = pipe_wrapper_cls.backend
     logger.info(f"backend is not passed in, use default backend {backend}")
 
   if framework not in PIPELINE_MAPPING[task]:
@@ -464,7 +266,7 @@ def get_pipeline_wrapper(
                             backend=backend,
                             model_kwargs=model_kwargs,
                             **kwargs)
-  pipe_wrapper.set_pipeline(pipeline)
-  
-  return pipe_wrapper
+
+  return pipe_wrapper_cls(pipeline)
+
   

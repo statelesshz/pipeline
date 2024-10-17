@@ -1,5 +1,4 @@
-from .hf import (PipelineWrapper,
-                 TextGenerationPipeline,
+from .hf import (TextGenerationPipeline,
                  VisualQuestionAnsweringPipeline,
                  ZeroShotClassificationPipeline,
                  ZeroShotObjectDetectionPipeline,
