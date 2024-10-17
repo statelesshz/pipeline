@@ -122,32 +122,6 @@ def _get_generated_text(res):
 
 
 class TextGenerationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None, 
-               model: str = None,
-               config: str = None, 
-               tokenizer: str = None, 
-               feature_extractor: str = None, 
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None, 
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer =tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
   
   def __call__(
     self,
@@ -181,32 +155,6 @@ class TextGenerationPipeline(HFPipeline):
 
 
 class VisualQuestionAnsweringPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -224,32 +172,6 @@ class VisualQuestionAnsweringPipeline(HFPipeline):
 
 
 class ZeroShotObjectDetectionPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -267,32 +189,6 @@ class ZeroShotObjectDetectionPipeline(HFPipeline):
 
 
 class ZeroShotClassificationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -309,32 +205,6 @@ class ZeroShotClassificationPipeline(HFPipeline):
 
 
 class DepthEstimationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -350,32 +220,6 @@ class DepthEstimationPipeline(HFPipeline):
 
 
 class ImageToImagePipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -391,32 +235,6 @@ class ImageToImagePipeline(HFPipeline):
 
 
 class MaskGenerationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -438,32 +256,6 @@ class MaskGenerationPipeline(HFPipeline):
 
 
 class ZeroShotImageClassificationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None, 
-               model: str = None,
-               config: str = None, 
-               tokenizer: str = None, 
-               feature_extractor: str = None, 
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None, 
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer =tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
   
   def __call__(
     self,
@@ -479,32 +271,6 @@ class ZeroShotImageClassificationPipeline(HFPipeline):
 
 
 class FeatureExtractionPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None, 
-               model: str = None,
-               config: str = None, 
-               tokenizer: str = None, 
-               feature_extractor: str = None, 
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None, 
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer =tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
     self,
@@ -520,32 +286,6 @@ class FeatureExtractionPipeline(HFPipeline):
 
 
 class ImageClassificationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None, 
-               model: str = None,
-               config: str = None, 
-               tokenizer: str = None, 
-               feature_extractor: str = None, 
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None, 
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer =tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
     self,
@@ -561,32 +301,6 @@ class ImageClassificationPipeline(HFPipeline):
 
 
 class ImageToTextPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None, 
-               model: str = None,
-               config: str = None, 
-               tokenizer: str = None, 
-               feature_extractor: str = None, 
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None, 
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer =tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
     self,
@@ -602,32 +316,6 @@ class ImageToTextPipeline(HFPipeline):
 
 
 class Text2TextGenerationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None, 
-               model: str = None,
-               config: str = None, 
-               tokenizer: str = None, 
-               feature_extractor: str = None, 
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None, 
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer =tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
     self,
@@ -643,32 +331,6 @@ class Text2TextGenerationPipeline(HFPipeline):
 
 
 class TokenClassificationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None, 
-               model: str = None,
-               config: str = None, 
-               tokenizer: str = None, 
-               feature_extractor: str = None, 
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None, 
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer =tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
     self,
@@ -684,32 +346,6 @@ class TokenClassificationPipeline(HFPipeline):
 
 
 class FillMaskPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -731,32 +367,6 @@ class FillMaskPipeline(HFPipeline):
 
 
 class QuestionAnsweringPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -788,32 +398,6 @@ class QuestionAnsweringPipeline(HFPipeline):
 
 
 class SummarizationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -835,32 +419,6 @@ class SummarizationPipeline(HFPipeline):
 
 
 class TableQuestionAnsweringPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -884,32 +442,6 @@ class TableQuestionAnsweringPipeline(HFPipeline):
 
 
 class TranslationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
@@ -935,32 +467,6 @@ class TranslationPipeline(HFPipeline):
 
 
 class TextClassificationPipeline(HFPipeline):
-  def __init__(self,
-               task: str = None,
-               model: str = None,
-               config: str = None,
-               tokenizer: str = None,
-               feature_extractor: str = None,
-               image_processor: str = None,
-               revision: str = None,
-               framework: str = None,
-               backend: str = None,
-               model_kwargs: Dict = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.config = config
-    self.tokenizer = tokenizer
-    self.feature_extractor = feature_extractor
-    self.image_processor = image_processor
-    self.revision = revision
-    self.framework = "pt"
-    self.backend = "transformers"
-    self.model_kwargs = copy.deepcopy(model_kwargs)
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
 
   def __call__(
           self,
