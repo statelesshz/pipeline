@@ -1,6 +1,6 @@
-from typing import Callable, Optional, List
+from typing import Callable, Optional, List, Iterator, Type
 
-from .utils import Registry
+from .utils import Registry, require_version
 
 
 pipeline_wrapper_registry = Registry()
@@ -62,12 +62,42 @@ class BasePipeline:
             pipeline_registry.get(cls.task)[cls.framework] = {}
          pipeline_registry.get(cls.task)[cls.framework][cls.backend] = cls
 
+   @classmethod
+   def _iter_ancestors(cls) -> Iterator[Type["BasePipeline"]]:
+      yield cls
+      for base in cls.__bases__:
+         if base == BasePipeline:
+               yield base
+         elif not issubclass(base, BasePipeline):
+               continue
+         else:
+               yield from base._iter_ancestors()
+
+   @property
+   def _requirement_dependency(self) -> List[str]:
+      deps = []
+      # We add dependencies from ancestor classes to derived classes
+      # and keep the order. We do nont remove redundant dependencies
+      # automatically.
+      for base in reversed(list(self._iter_ancestors())):
+         if base.requirement_dependency:
+            deps.extend(base.requirement_dependency)
+      # Do not sort or uniq pip deps line, as order matters
+      return deps
+   
+   def check_dependency(self):
+      for dep in self._requirement_dependency:
+         require_version(dep)
+
 
 class PTBasePipeline(BasePipeline):
    framework: str = "pt"
    # please override this in your derived class
    task: str = "undefined"
    backend: str = "undefined"
+   requirement_dependency = [
+      "torch-npu", # Do we need to ping the version of torch-npu?
+   ]
 
 
 class MSBasePipeline(BasePipeline):
@@ -75,3 +105,6 @@ class MSBasePipeline(BasePipeline):
    # please override this in your derived class
    task: str = "undefined"
    backend: str = "undefined"
+   requirement_dependency = [
+      "mindspore == 2.3.1",
+   ]
