@@ -1,9 +1,10 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, List
 
 from .utils import Registry
 
 
 pipeline_wrapper_registry = Registry()
+pipeline_registry = Registry()
 
 
 class BasePipelineWrapper:
@@ -35,16 +36,42 @@ class BasePipelineWrapper:
 
 
 class BasePipeline:
-   def __init__(self, task, **kwargs):
-      self.task = task
+   task: Optional[str] = None
+   framework: Optional[str] = None
+   backend: Optional[str] = None
+   requirement_dependency: Optional[List[str]] = None
+
+   def __init_subclass__(cls, **kwargs) -> None:
+      super.__init_subclass__(**kwargs)
+      if cls.task is None:
+         raise ValueError("You made a programming error: the task is None.")
+      if cls.framework is None:
+         raise ValueError("You made a programming error: the framework is None.")
+      if cls.backend is None:
+         raise ValueError("You made a programming error: the backend is None")
+      if cls.task not in pipeline_registry.keys():
+         pipeline_registry.register(
+            cls.task, {
+               cls.framework: {
+                  cls.backend: cls,
+               },
+            }
+         )
+      else:
+         if cls.framework not in pipeline_registry.get(cls.task):
+            pipeline_registry.get(cls.task)[cls.framework] = {}
+         pipeline_registry.get(cls.task)[cls.framework][cls.backend] = cls
+
 
 class PTBasePipeline(BasePipeline):
-   def __init__(self, task, **kwargs):
-      super().__init__(task, **kwargs)
-      self.framework = "pt"
+   framework: str = "pt"
+   # please override this in your derived class
+   task: str = "undefined"
+   backend: str = "undefined"
 
 
 class MSBasePipeline(BasePipeline):
-   def __init__(self, task, **kwargs):
-      super().__init__(task, **kwargs)
-      self.framework = "ms"
+   framework: str = "ms"
+   # please override this in your derived class
+   task: str = "undefined"
+   backend: str = "undefined"

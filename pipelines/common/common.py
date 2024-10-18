@@ -14,6 +14,13 @@ class VisualQuestionAnsweringPipelineWrapper(BasePipelineWrapper):
   model_id: str = "PyTorch-NPU/blip_vqa_base@4450392"
 
 
+class ZeroShotObjectDetectionPipelineWrapper(BasePipelineWrapper):
+  task: str = "zero-shot-object-detection"
+  framework: str = "pt"
+  backend: str = "transformers"
+  model_id: str = "PyTorch-NPU/owlvit_base_patch32@ff06496"
+
+
 class ZeroShotClassificationPipelineWrapper(BasePipelineWrapper):
   task: str = "zero-shot-classification"
   framework: str = "pt"

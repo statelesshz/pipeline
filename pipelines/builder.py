@@ -3,181 +3,12 @@ from typing import Optional, Literal, Type, Dict, Any
 from loguru import logger
 
 
-from .base import pipeline_wrapper_registry
-from .common.hf import (
-  TextGenerationPipeline,
-  VisualQuestionAnsweringPipeline,
-  ZeroShotObjectDetectionPipeline,
-  ZeroShotClassificationPipeline,
-  DepthEstimationPipeline,
-  ImageToImagePipeline,
-  MaskGenerationPipeline,
-  ZeroShotImageClassificationPipeline,
-  FeatureExtractionPipeline,
-  ImageClassificationPipeline,
-  ImageToTextPipeline,
-  Text2TextGenerationPipeline,
-  TokenClassificationPipeline,
-  FillMaskPipeline,
-  QuestionAnsweringPipeline,
-  SummarizationPipeline,
-  TableQuestionAnsweringPipeline,
-  TranslationPipeline,
-  TextClassificationPipeline,
-)
-from .common.ms import TextGenerationPipeline as MSTextGenerationPipeline
+from .base import pipeline_wrapper_registry, pipeline_registry
 from .utils import get_task_from_readme
 
+# pipelinewrapper & pipeline registrations are done by pre-importing the module
+from .common import *  # noqa: F403
 
-PIPELINE_MAPPING = {}
-
-
-def register_pipeline(task: str, framework: str, backend: str, pipeline: Type, **kwargs):
-  if task not in PIPELINE_MAPPING:
-    PIPELINE_MAPPING[task] = {}
-  if framework not in PIPELINE_MAPPING[task]:
-    PIPELINE_MAPPING[task][framework] = {}
-  PIPELINE_MAPPING[task][framework][backend] = pipeline
-
-register_pipeline(
-  "text-generation",
-  "pt",
-  "transformers",
-  TextGenerationPipeline
-)
-
-register_pipeline(
-  "visual-question-answering",
-  "pt",
-  "transformers",
-  VisualQuestionAnsweringPipeline
-)
-
-register_pipeline(
-  "zero-shot-object-detection",
-  "pt",
-  "transformers",
-  ZeroShotObjectDetectionPipeline
-)
-
-register_pipeline(
-  "zero-shot-classification",
-  "pt",
-  "transformers",
-  ZeroShotClassificationPipeline
-)
-
-register_pipeline(
-  "depth-estimation",
-  "pt",
-  "transformers",
-  DepthEstimationPipeline
-)
-
-register_pipeline(
-  "image-to-image",
-  "pt",
-  "transformers",
-  ImageToImagePipeline
-)
-
-register_pipeline(
-  "mask-generation",
-  "pt",
-  "transformers",
-  MaskGenerationPipeline
-)
-
-register_pipeline(
-  "zero-shot-image-classification",
-  "pt",
-  "transformers",
-  ZeroShotImageClassificationPipeline
-)
-
-register_pipeline(
-  "feature-extraction",
-  "pt",
-  "transformers",
-  FeatureExtractionPipeline
-)
-
-register_pipeline(
-  "image-classification",
-  "pt",
-  "transformers",
-  ImageClassificationPipeline
-)
-
-register_pipeline(
-  "image-to-text",
-  "pt",
-  "transformers",
-  ImageToTextPipeline
-)
-
-register_pipeline(
-  "text2text-generation",
-  "pt",
-  "transformers",
-  Text2TextGenerationPipeline
-)
-
-register_pipeline(
-  "token-classification",
-  "pt",
-  "transformers",
-  TokenClassificationPipeline
-)
-
-register_pipeline(
-  "fill-mask",
-  "pt",
-  "transformers",
-  FillMaskPipeline
-)
-
-register_pipeline(
-  "question-answering",
-  "pt",
-  "transformers",
-  QuestionAnsweringPipeline
-)
-
-register_pipeline(
-  "summarization",
-  "pt",
-  "transformers",
-  SummarizationPipeline
-)
-
-register_pipeline(
-  "table-question-answering",
-  "pt",
-  "transformers",
-  TableQuestionAnsweringPipeline
-)
-
-register_pipeline(
-  "translation",
-  "pt",
-  "transformers",
-  TranslationPipeline
-)
-
-register_pipeline(
-  "text-classification",
-  "pt",
-  "transformers",
-  TextClassificationPipeline
-)
-
-register_pipeline(
-  "text-generation",
-  "ms",
-  "mindformers",
-  MSTextGenerationPipeline
-)
 
 def get_pipeline_wrapper(
   task: Optional[str] = None,
@@ -249,13 +80,13 @@ def get_pipeline_wrapper(
     backend = pipe_wrapper_cls.backend
     logger.info(f"backend is not passed in, use default backend {backend}")
 
-  if framework not in PIPELINE_MAPPING[task]:
+  if framework not in pipeline_registry.get(task):
     raise ValueError(f"{framework} dost not support for {task}")
 
-  if backend not in PIPELINE_MAPPING[task][framework]:
+  if backend not in pipeline_registry.get(task).get(framework):
     raise ValueError(f"{backend} does not support for {task}")
   
-  pipeline_class = PIPELINE_MAPPING[task][framework][backend]
+  pipeline_class =  pipeline_registry.get(task).get(framework).get(backend)
   pipeline = pipeline_class(task=task,
                             model=model,
                             config=config,
@@ -268,5 +99,3 @@ def get_pipeline_wrapper(
                             **kwargs)
 
   return pipe_wrapper_cls(pipeline)
-
-  

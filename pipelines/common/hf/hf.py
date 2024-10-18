@@ -7,34 +7,34 @@ from loguru import logger
 from openmind.utils import is_vision_available
 
 from ...base import PTBasePipeline
-from .hf_utils import pipeline_registry
+from .hf_utils import pipeline_creator_registry
 
 if is_vision_available():
     from PIL import Image
 
 
 class HFPipeline(PTBasePipeline):
+  backend: str = "transformers"
+
   def __init__(self,
-               task: str = None, 
                model: str = None,
                config: str = None, 
                tokenizer: str = None, 
                feature_extractor: str = None, 
                image_processor: str = None,
-               framework: str = None, 
-               backend: str = None,
                model_kwargs: Dict = None,
                **kwargs):
-    self.task = task
     self.model = model
     self.config = config
     self.tokenizer =tokenizer
     self.feature_extractor = feature_extractor
     self.image_processor = image_processor
-    self.framework = "pt"
-    self.backend = backend
     self.model_kwargs = copy.deepcopy(model_kwargs)
+    
     self.kwargs = copy.deepcopy(kwargs)
+    self.task = self.kwargs.pop("task", None)
+    self.framework = self.kwargs.pop("framework", None)
+    self.backend = self.kwargs.pop("backend", None)
 
     # access pipeline here to trigger download and load
     self.pipeline
@@ -42,7 +42,7 @@ class HFPipeline(PTBasePipeline):
   @cached_property
   def pipeline(self) -> Callable:
     try:
-      pipeline_creator = pipeline_registry.get(self.task).get(self.framework).get(self.backend)
+      pipeline_creator = pipeline_creator_registry.get(self.task).get(self.framework).get(self.backend)
     except Exception as e:
       # If any error occurs, we issue a warning, but don't exit immediately.
       logger.warning(
@@ -60,7 +60,6 @@ class HFPipeline(PTBasePipeline):
     )
 
     try:
-      # TODO: 确认这里要传入什么参数
       pipeline = pipeline_creator(
         task=self.task,
         model=self.model,
@@ -88,8 +87,8 @@ class HFPipeline(PTBasePipeline):
       # TODO: add more user-friendly error messages
       raise e
 
-    # autocast causes invalid value (and generates black images) for text-to-image and image-to-image
-    no_auto_cast_set = ("text-to-image", "image-to-image")
+    # autocast causes invalid value (and generates black images) for text-to-image
+    no_auto_cast_set = ("text-to-image")
 
     if torch.cuda.is_available() and self.task not in no_auto_cast_set:
       with torch.autocast(device_type="cuda"):
@@ -112,6 +111,7 @@ def _get_generated_text(res):
 
 
 class TextGenerationPipeline(HFPipeline):
+  task = "text-generation"
   
   def __call__(
     self,
@@ -145,6 +145,7 @@ class TextGenerationPipeline(HFPipeline):
 
 
 class VisualQuestionAnsweringPipeline(HFPipeline):
+  task = "visual-question-answering"
 
   def __call__(
           self,
@@ -162,6 +163,7 @@ class VisualQuestionAnsweringPipeline(HFPipeline):
 
 
 class ZeroShotObjectDetectionPipeline(HFPipeline):
+  task = "zero-shot-object-detection"
 
   def __call__(
           self,
@@ -179,6 +181,7 @@ class ZeroShotObjectDetectionPipeline(HFPipeline):
 
 
 class ZeroShotClassificationPipeline(HFPipeline):
+  task = "zero-shot-classification"
 
   def __call__(
           self,
@@ -195,6 +198,7 @@ class ZeroShotClassificationPipeline(HFPipeline):
 
 
 class DepthEstimationPipeline(HFPipeline):
+  task = "depth-estimation"
 
   def __call__(
           self,
@@ -210,6 +214,7 @@ class DepthEstimationPipeline(HFPipeline):
 
 
 class ImageToImagePipeline(HFPipeline):
+  task = "image-to-image"
 
   def __call__(
           self,
@@ -225,6 +230,7 @@ class ImageToImagePipeline(HFPipeline):
 
 
 class MaskGenerationPipeline(HFPipeline):
+  task = "mask-generation"
 
   def __call__(
           self,
@@ -246,6 +252,7 @@ class MaskGenerationPipeline(HFPipeline):
 
 
 class ZeroShotImageClassificationPipeline(HFPipeline):
+  task = "zero-shot-image-classification"
   
   def __call__(
     self,
@@ -261,6 +268,7 @@ class ZeroShotImageClassificationPipeline(HFPipeline):
 
 
 class FeatureExtractionPipeline(HFPipeline):
+  task = "feature-extraction"
 
   def __call__(
     self,
@@ -276,6 +284,7 @@ class FeatureExtractionPipeline(HFPipeline):
 
 
 class ImageClassificationPipeline(HFPipeline):
+  task = "image-classification"
 
   def __call__(
     self,
@@ -291,6 +300,7 @@ class ImageClassificationPipeline(HFPipeline):
 
 
 class ImageToTextPipeline(HFPipeline):
+  task = "image-to-text"
 
   def __call__(
     self,
@@ -306,6 +316,7 @@ class ImageToTextPipeline(HFPipeline):
 
 
 class Text2TextGenerationPipeline(HFPipeline):
+  task = "text2text-generation"
 
   def __call__(
     self,
@@ -321,6 +332,7 @@ class Text2TextGenerationPipeline(HFPipeline):
 
 
 class TokenClassificationPipeline(HFPipeline):
+  task = "token-classification"
 
   def __call__(
     self,
@@ -336,6 +348,7 @@ class TokenClassificationPipeline(HFPipeline):
 
 
 class FillMaskPipeline(HFPipeline):
+  task = "fill-mask"
 
   def __call__(
           self,
@@ -357,6 +370,7 @@ class FillMaskPipeline(HFPipeline):
 
 
 class QuestionAnsweringPipeline(HFPipeline):
+  task = "question-answering"
 
   def __call__(
           self,
@@ -388,6 +402,7 @@ class QuestionAnsweringPipeline(HFPipeline):
 
 
 class SummarizationPipeline(HFPipeline):
+  task = "summarization"
 
   def __call__(
           self,
@@ -409,6 +424,7 @@ class SummarizationPipeline(HFPipeline):
 
 
 class TableQuestionAnsweringPipeline(HFPipeline):
+  task = "table-question-answering"
 
   def __call__(
           self,
@@ -432,6 +448,7 @@ class TableQuestionAnsweringPipeline(HFPipeline):
 
 
 class TranslationPipeline(HFPipeline):
+  task = "translation"
 
   def __call__(
           self,
@@ -457,6 +474,7 @@ class TranslationPipeline(HFPipeline):
 
 
 class TextClassificationPipeline(HFPipeline):
+  task = "text-classification"
 
   def __call__(
           self,
