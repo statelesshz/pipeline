@@ -10,11 +10,15 @@ from ...base import PTBasePipeline
 from .hf_utils import pipeline_creator_registry
 
 if is_vision_available():
-    from PIL import Image
+    from PIL.Image import Image
 
 
 class HFPipeline(PTBasePipeline):
   backend: str = "transformers"
+  requirement_dependency = [
+    "accelerate",
+    "transformers",
+  ]
 
   def __init__(self,
                model: str = None,
@@ -35,6 +39,9 @@ class HFPipeline(PTBasePipeline):
     self.task = self.kwargs.pop("task", None)
     self.framework = self.kwargs.pop("framework", None)
     self.backend = self.kwargs.pop("backend", None)
+
+    # check dependencies
+    self.check_dependency()
 
     # access pipeline here to trigger download and load
     self.pipeline
@@ -164,10 +171,11 @@ class VisualQuestionAnsweringPipeline(HFPipeline):
 
 class ZeroShotObjectDetectionPipeline(HFPipeline):
   task = "zero-shot-object-detection"
+  requirement_dependency = ["pillow"]
 
   def __call__(
           self,
-          image: Union[str, "Image.Image", List[Dict[str, Any]]],
+          image: Union[str, "Image", List[Dict[str, Any]]],
           candidate_labels: Union[str, List[str]] = None,
           **kwargs,
   ):
@@ -199,10 +207,11 @@ class ZeroShotClassificationPipeline(HFPipeline):
 
 class DepthEstimationPipeline(HFPipeline):
   task = "depth-estimation"
+  requirement_dependency = ["pillow"]
 
   def __call__(
           self,
-          images: Union[str, List[str], "Image.Image", List["Image.Image"]] = None,
+          images: Union[str, List[str], "Image", List["Image"]] = None,
           **kwargs,
   ):
     res = self._run_pipeline(
@@ -215,12 +224,13 @@ class DepthEstimationPipeline(HFPipeline):
 
 class ImageToImagePipeline(HFPipeline):
   task = "image-to-image"
+  requirement_dependency = ["pillow"]
 
   def __call__(
           self,
-          images: Union[str, List[str], "Image.Image", List["Image.Image"]] = None,
+          images: Union[str, List[str], "Image", List["Image"]] = None,
           **kwargs,
-  ) -> Union["Image.Image", List["Image.Image"]]:
+  ) -> Union["Image", List["Image"]]:
     res = self._run_pipeline(
       images=images,
       **kwargs,
@@ -253,7 +263,8 @@ class MaskGenerationPipeline(HFPipeline):
 
 class ZeroShotImageClassificationPipeline(HFPipeline):
   task = "zero-shot-image-classification"
-  
+  requirement_dependency = ["pillow"]
+ 
   def __call__(
     self,
     images: Union[str, List[str], "Image", List["Image"]],
@@ -285,10 +296,11 @@ class FeatureExtractionPipeline(HFPipeline):
 
 class ImageClassificationPipeline(HFPipeline):
   task = "image-classification"
+  requirement_dependency = ["pillow"]
 
   def __call__(
     self,
-    images: Union[str, List[str], "Image.Image", List["Image.Image"]],
+    images: Union[str, List[str], "Image", List["Image"]],
     **kwargs,
   ) -> Union[str, List[str]]:
     res = self._run_pipeline(
@@ -301,10 +313,11 @@ class ImageClassificationPipeline(HFPipeline):
 
 class ImageToTextPipeline(HFPipeline):
   task = "image-to-text"
+  requirement_dependency = ["pillow"]
 
   def __call__(
     self,
-    images: Union[str, List[str], "Image.Image", List["Image.Image"]],
+    images: Union[str, List[str], "Image", List["Image"]],
     **kwargs,
   ) -> Union[str, List[str]]:
     res = self._run_pipeline(
