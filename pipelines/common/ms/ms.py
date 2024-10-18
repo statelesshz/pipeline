@@ -1,21 +1,11 @@
 import copy
 from functools import cached_property
-from typing import Callable, Optional, List, Union
+from typing import Callable, List, Union
 
 from loguru import logger
 
-from ...base import BasePipelineWrapper, MSBasePipeline
+from ...base import MSBasePipeline
 from .ms_utils import pipeline_registry
-
-
-class PipelineWrapper(BasePipelineWrapper):
-  def __init__(self,
-               task: str = None,
-               default_framework: str = None,
-               default_model: str = None,
-               default_backend: str = None,
-               **kwargs):
-    super().__init__(task, default_framework, default_model, default_backend, **kwargs)
 
 
 class MSPipeline(MSBasePipeline):

@@ -77,20 +77,20 @@ def create_transformers_pipeline(task: str=None,
   else:
     image_processor_name_or_path = image_processor
 
-    pipe = pipeline(task=task,
-                    model=model_name_or_path,
-                    tokenizer = tokenizer_name_or_path,
-                    config = config_name_or_path,
-                    feature_extractor = feature_extractor_name_or_path,
-                    image_processor = image_processor_name_or_path,
-                    revision = revision,
-                    use_fast=use_fast,
-                    device = device,
-                    device_map = device_map,
-                    torch_dtype=torch_dtype,
-                    trust_remote_code=trust_remote_code,
-                    model_kwargs= model_kwargs,
-                    **kwargs)
+  pipe = pipeline(task=task,
+                  model=model_name_or_path,
+                  tokenizer = tokenizer_name_or_path,
+                  config = config_name_or_path,
+                  feature_extractor = feature_extractor_name_or_path,
+                  image_processor = image_processor_name_or_path,
+                  revision = revision,
+                  use_fast=use_fast,
+                  device = device,
+                  device_map = device_map,
+                  torch_dtype=torch_dtype,
+                  trust_remote_code=trust_remote_code,
+                  model_kwargs= model_kwargs,
+                  **kwargs)
 
   return pipe
 

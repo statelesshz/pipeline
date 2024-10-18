@@ -6,21 +6,11 @@ from loguru import logger
 
 from openmind.utils import is_vision_available
 
-from ...base import BasePipelineWrapper, PTBasePipeline
+from ...base import PTBasePipeline
 from .hf_utils import pipeline_registry
 
 if is_vision_available():
     from PIL import Image
-
-
-class PipelineWrapper(BasePipelineWrapper):
-  def __init__(self,
-               task: str = None,
-               default_framework: str = None,
-               default_model: str = None,
-               default_backend: str = None,
-               **kwargs):
-    super().__init__(task, default_framework, default_model, default_backend, **kwargs)
 
 
 class HFPipeline(PTBasePipeline):
@@ -65,7 +55,7 @@ class HFPipeline(PTBasePipeline):
     
     logger.info(
       f"Creating pipeline for {self.task}(framework={self.framework}, backend={self.backend},"
-      f" model={self.model}, revision={self.revision}).\n"
+      f" model={self.model}, revision={self.kwargs.get('revision')}).\n"
       "openMind download might take a while, please be patient..."
     )
 
