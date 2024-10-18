@@ -1,7 +1,7 @@
 from ...utils import Registry, download_from_repo
 
 
-pipeline_registry = Registry()
+pipeline_creator_registry = Registry()
 
 
 def create_mindformers_pipeline(task: str=None,
@@ -60,7 +60,7 @@ def create_mindformers_pipeline(task: str=None,
 for task in [
   "text-generation",
 ]:
-  pipeline_registry.register(
+  pipeline_creator_registry.register(
     task,
     {
       "ms": {

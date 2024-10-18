@@ -5,25 +5,27 @@ from typing import Callable, List, Union
 from loguru import logger
 
 from ...base import MSBasePipeline
-from .ms_utils import pipeline_registry
+from .ms_utils import pipeline_creator_registry
 
 
 class MSPipeline(MSBasePipeline):
+  backend: str = "mindformers"
+
   def __init__(self,
-               task: str = None, 
                model: str = None,
                tokenizer: str = None,
                image_processor: str = None,
                audio_processor: str = None,
-               backend: str = None,
                **kwargs):
-    self.task = task
     self.model = model
     self.tokenizer =tokenizer
     self.image_processor = image_processor
     self.audio_processor = audio_processor
-    self.backend = backend
+
     self.kwargs = copy.deepcopy(kwargs)
+    # discard keyword "task" in advance to avoid passing duplicate keyward argument "task"
+    # to pipeline_creator
+    self.kwargs.pop("task", None)
 
     # access pipeline here to trigger download and load
     self.pipeline
@@ -31,7 +33,7 @@ class MSPipeline(MSBasePipeline):
   @cached_property
   def pipeline(self) -> Callable:
     try:
-      pipeline_creator = pipeline_registry.get(self.task).get(self.framework).get(self.backend)
+      pipeline_creator = pipeline_creator_registry.get(self.task).get(self.framework).get(self.backend)
     except Exception as e:
       # If any error occurs, we issue a warning, but don't exit immediately.
       logger.warning(
@@ -49,7 +51,6 @@ class MSPipeline(MSBasePipeline):
     )
 
     try:
-      # TODO: 确认这里要传入什么参数
       pipeline = pipeline_creator(
         task=self.task,
         model=self.model,
@@ -67,26 +68,8 @@ class MSPipeline(MSBasePipeline):
     return self.pipeline(*args, **kwargs)
 
 
-class TextGenerationPipeline(MSPipeline):
-  def __init__(self,
-               task: str = None, 
-               model: str = None,
-               tokenizer: str = None,
-               image_processor: str = None,
-               audio_processor: str = None,
-               backend: str = None,
-               **kwargs):
-    self.task = task
-    self.model = model
-    self.tokenizer = tokenizer
-    self.image_processor = image_processor
-    self.audio_processor = audio_processor
-    self.framework = "ms"
-    self.backend = "mindformers"
-    self.kwargs = copy.deepcopy(kwargs)
-
-    # access pipeline here to trigger download and load
-    self.pipeline
+class MSTextGenerationPipeline(MSPipeline):
+  task = "text-generation"
   
   def __call__(
     self,

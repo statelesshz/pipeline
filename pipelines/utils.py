@@ -6,14 +6,6 @@ from loguru import logger
 from openmind.utils.hub import OpenMindHub
 
 
-TRUST_REMOTE_CODE = os.environ.get("OM_TRUST_REMOTE_CODE", "true").lower() in (
-    "true",
-    "1",
-    "t",
-    "on",
-)
-
-
 class Registry:
     """
     A utility class to register and retrieve values by keys.
